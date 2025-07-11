@@ -79,7 +79,91 @@ body {
   }
 }
 
-/* Animation classes */
+/* === ADVANCED ANIMATIONS === */
+
+/* Typewriter effect for text */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blinkCursor {
+  from, to { border-color: transparent; }
+  50% { border-color: #2563eb; }
+}
+
+/* Floating animation for elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Pulse glow effect */
+@keyframes pulseGlow {
+  0%, 100% { 
+    box-shadow: 0 0 5px rgba(37, 99, 235, 0.3); 
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.6), 0 0 30px rgba(37, 99, 235, 0.4); 
+  }
+}
+
+/* Scale and rotate on hover */
+@keyframes scaleRotate {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.1) rotate(5deg); }
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Gradient move */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Fade in with scale */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide up and fade */
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Wobble effect */
+@keyframes wobble {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(5deg); }
+  30% { transform: rotate(-5deg); }
+  45% { transform: rotate(3deg); }
+  60% { transform: rotate(-3deg); }
+  75% { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* === ANIMATION CLASSES === */
+
 .animate-fadeInUp {
   animation: fadeInUp 1.2s ease-out forwards;
   opacity: 0; /* Start invisible */
@@ -104,6 +188,65 @@ body {
   animation: bounceGentle 2s ease-in-out infinite;
 }
 
+.animate-typewriter {
+  width: 0;
+  animation: typewriter 3s steps(40) forwards;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid #2563eb;
+}
+
+.animate-typewriter::after {
+  animation: blinkCursor 1s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulseGlow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-scaleRotate {
+  transition: transform 0.3s ease;
+}
+
+.animate-scaleRotate:hover {
+  animation: scaleRotate 0.3s ease forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-gradientMove {
+  background: linear-gradient(270deg, #2563eb, #7c3aed, #dc2626, #2563eb);
+  background-size: 800% 800%;
+  animation: gradientMove 4s ease infinite;
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slideUpFade {
+  animation: slideUpFade 1s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-wobble:hover {
+  animation: wobble 0.6s ease-in-out;
+}
+
 /* Animation delay utilities */
 .\[animation-delay\:0\.1s\] {
   animation-delay: 0.1s;
@@ -124,3 +267,60 @@ body {
 .\[animation-delay\:0\.5s\] {
   animation-delay: 0.5s;
 }
+
+/* === MODERN CARD EFFECTS === */
+
+.card-hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Glass morphism effect */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Neon glow effect */
+.neon-glow {
+  text-shadow: 
+    0 0 5px #2563eb,
+    0 0 10px #2563eb,
+    0 0 15px #2563eb,
+    0 0 20px #2563eb;
+}
+
+/* === LOADING ANIMATIONS === */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+.animate-ping-slow {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* === STAGGER ANIMATIONS === */
+
+.stagger-delay-1 { animation-delay: 0.1s; }
+.stagger-delay-2 { animation-delay: 0.2s; }
+.stagger-delay-3 { animation-delay: 0.3s; }
+.stagger-delay-4 { animation-delay: 0.4s; }
+.stagger-delay-5 { animation-delay: 0.5s; }
