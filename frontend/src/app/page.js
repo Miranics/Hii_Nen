@@ -22,8 +22,14 @@ export default function Home() {
           <Link href="/about" className="hover:underline">
             About
           </Link>
+          <Link href="/faq" className="hover:underline">
+            FAQ
+          </Link>
           <Link href="/contact" className="hover:underline">
             Contact
+          </Link>
+          <Link href="/terms" className="hover:underline">
+            Terms
           </Link>
         </nav>
       </header>
@@ -38,7 +44,7 @@ export default function Home() {
           Your AI Co-Founder for ideation, validation, and startup success —
           let's build the future together.
         </p>
-        
+
         {/* === FEATURES PREVIEW === */}
         <div className="grid gap-6 sm:grid-cols-3 text-center w-full max-w-3xl mt-4">
           <div className="flex flex-col items-center gap-3">
@@ -63,7 +69,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        
+
         <div className="flex gap-4 flex-col sm:flex-row">
           <Link
             href="/features"
@@ -93,6 +99,15 @@ export default function Home() {
         </a>
         <Link href="/privacy" className="hover:underline">
           Privacy
+        </Link>
+        <Link href="/terms" className="hover:underline">
+          Terms
+        </Link>
+        <Link href="/faq" className="hover:underline">
+          FAQ
+        </Link>
+        <Link href="/contact" className="hover:underline">
+          Contact
         </Link>
       </footer>
     </div>
