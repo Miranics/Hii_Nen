@@ -21,7 +21,7 @@ export default function Home() {
               className="animate-spin-slow"
             />
           </div>
-          <span className="text-2xl font-extrabold text-blue-600 tracking-tight animate-shimmer">
+          <span className="text-2xl font-extrabold text-blue-600 tracking-tight hover:text-purple-600 transition-colors duration-300">
             HiiNen
           </span>
         </div>
@@ -53,7 +53,7 @@ export default function Home() {
         
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight animate-slideUpFade">
           Start and Grow Your Ideas with{" "}
-          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-transparent bg-clip-text animate-gradientMove neon-glow">
+          <span className="gradient-text-visible">
             HiiNen
           </span>
         </h1>
@@ -81,8 +81,8 @@ export default function Home() {
       <section className="w-full bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-24">
         <div className="grid gap-8 sm:grid-cols-3 w-full max-w-6xl mx-auto px-8">
           <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-blue-100 to-blue-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-1">
-            <div className="animate-scaleRotate animate-wobble">
-              <Image src="/idea.svg" alt="Idea Generation" width={48} height={48} className="animate-spin-slow" />
+            <div className="animate-float">
+              <Image src="/idea.svg" alt="Idea Generation" width={48} height={48} />
             </div>
             <h3 className="text-lg font-bold">AI-Powered Ideation</h3>
             <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -90,8 +90,8 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-purple-100 to-purple-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-2">
-            <div className="animate-scaleRotate animate-wobble">
-              <Image src="/validate.svg" alt="Validation" width={48} height={48} className="animate-ping-slow" />
+            <div className="animate-float stagger-delay-1">
+              <Image src="/validate.svg" alt="Validation" width={48} height={48} />
             </div>
             <h3 className="text-lg font-bold">Smart Validation</h3>
             <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -99,8 +99,8 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-green-100 to-green-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-3">
-            <div className="animate-scaleRotate animate-wobble">
-              <Image src="/mentor.svg" alt="Mentorship" width={48} height={48} className="animate-float" />
+            <div className="animate-float stagger-delay-2">
+              <Image src="/mentor.svg" alt="Mentorship" width={48} height={48} />
             </div>
             <h3 className="text-lg font-bold">Mentorship Access</h3>
             <p className="text-sm text-gray-700 dark:text-gray-300 text-center">

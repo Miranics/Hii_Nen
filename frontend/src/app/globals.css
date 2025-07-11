@@ -120,11 +120,17 @@ body {
   100% { background-position: 200% 0; }
 }
 
-/* Gradient move */
+/* Improved gradient animation for better text visibility */
 @keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
+  100% { 
+    background-position: 0% 50%;
+  }
 }
 
 /* Fade in with scale */
@@ -200,8 +206,14 @@ body {
   animation: blinkCursor 1s infinite;
 }
 
+/* Gentle float animation - improved */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
 .animate-pulseGlow {
@@ -228,9 +240,12 @@ body {
 }
 
 .animate-gradientMove {
-  background: linear-gradient(270deg, #2563eb, #7c3aed, #dc2626, #2563eb);
-  background-size: 800% 800%;
-  animation: gradientMove 4s ease infinite;
+  background: linear-gradient(270deg, #1d4ed8, #7c3aed, #1d4ed8);
+  background-size: 200% 200%;
+  animation: gradientMove 3s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .animate-fadeInScale {
@@ -310,7 +325,7 @@ body {
 }
 
 .animate-spin-slow {
-  animation: spin 3s linear infinite;
+  animation: spin 8s linear infinite;
 }
 
 .animate-ping-slow {
@@ -324,3 +339,24 @@ body {
 .stagger-delay-3 { animation-delay: 0.3s; }
 .stagger-delay-4 { animation-delay: 0.4s; }
 .stagger-delay-5 { animation-delay: 0.5s; }
+
+/* === SPECIAL TEXT EFFECTS === */
+
+/* Visible gradient text with animation */
+.gradient-text-visible {
+  background: linear-gradient(45deg, #2563eb, #7c3aed, #2563eb);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientMove 3s ease infinite;
+  font-weight: 900;
+}
+
+/* Fallback for browsers that don't support background-clip: text */
+@supports not (background-clip: text) {
+  .gradient-text-visible {
+    color: #2563eb;
+    -webkit-text-fill-color: initial;
+  }
+}
