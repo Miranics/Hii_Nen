@@ -26,10 +26,10 @@ export default function FAQPage() {
             <p className="text-gray-600 dark:text-gray-400">
               You can reach out anytime at{" "}
               <a
-                href="mailto:hiinen@example.com"
+                href="mailto:002nasya@gmail.com"
                 className="text-blue-600 underline hover:text-blue-700"
               >
-                hiinen@example.com
+                002nasya@gmail.com
               </a>.
             </p>
           </div>
