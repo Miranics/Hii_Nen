@@ -81,12 +81,12 @@ body {
 
 /* Animation classes */
 .animate-fadeInUp {
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: fadeInUp 1.2s ease-out forwards;
   opacity: 0; /* Start invisible */
 }
 
 .animate-fadeInDown {
-  animation: fadeInDown 0.8s ease-out forwards;
+  animation: fadeInDown 1.2s ease-out forwards;
   opacity: 0; /* Start invisible */
 }
 
