@@ -1,7 +1,81 @@
+'use client';
+
+import { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import { signUp, signInWithGoogle } from '@/lib/supabase';
 
 export default function SignUpPage() {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    userType: 'entrepreneur'
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await signUp(
+        formData.email, 
+        formData.password, 
+        formData.fullName, 
+        formData.userType
+      );
+      
+      if (error) {
+        setError(error.message);
+      } else {
+        // Show success message or redirect
+        alert('Account created successfully! Please check your email to verify your account.');
+        router.push('/login');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      const { data, error } = await signInWithGoogle();
+      if (error) {
+        setError(error.message);
+      }
+      // Google OAuth will redirect automatically
+    } catch (err) {
+      setError('Google signup failed');
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header with Logo */}

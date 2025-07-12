@@ -90,35 +90,38 @@ CREATE TRIGGER update_mentorship_requests_updated_at BEFORE UPDATE ON mentorship
 -- Row Level Security Policies
 
 -- User profiles: users can only see their own profile and public profiles of others
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Users can view own profile" ON user_profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON user_profiles FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "Users can insert own profile" ON user_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- Ideas: public ideas are viewable by all, private ideas only by owner
+ALTER TABLE ideas ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Public ideas are viewable by everyone" ON ideas FOR SELECT USING (is_public = true OR auth.uid() = user_id);
 CREATE POLICY "Users can create their own ideas" ON ideas FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update their own ideas" ON ideas FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete their own ideas" ON ideas FOR DELETE USING (auth.uid() = user_id);
 
 -- Mentorship requests: visible to both parties
+ALTER TABLE mentorship_requests ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Mentorship requests visible to involved parties" ON mentorship_requests FOR SELECT USING (auth.uid() = entrepreneur_id OR auth.uid() = mentor_id);
 CREATE POLICY "Entrepreneurs can create mentorship requests" ON mentorship_requests FOR INSERT WITH CHECK (auth.uid() = entrepreneur_id);
 CREATE POLICY "Mentors can update mentorship requests" ON mentorship_requests FOR UPDATE USING (auth.uid() = mentor_id);
 
 -- Mentor expertise: public readable, only mentor can modify
+ALTER TABLE mentor_expertise ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Mentor expertise publicly readable" ON mentor_expertise FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Mentors can manage their expertise" ON mentor_expertise FOR ALL USING (auth.uid() = mentor_id);
 
 -- Notifications: users can only see their own notifications
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+
 CREATE POLICY "Users can view own notifications" ON notifications FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can update own notifications" ON notifications FOR UPDATE USING (auth.uid() = user_id);
-
--- Enable RLS on all tables
-ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ideas ENABLE ROW LEVEL SECURITY;
-ALTER TABLE mentorship_requests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE mentor_expertise ENABLE ROW LEVEL SECURITY;
-ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- Create function to handle new user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -139,12 +142,3 @@ $$ language plpgsql security definer;
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
--- Insert some sample data (optional)
--- You can run this after your first user signup to test
-
--- Sample ideas (will be inserted after real users sign up)
-/*
-INSERT INTO ideas (user_id, title, description, industry, stage, funding_needed, looking_for, skills_needed, tags) VALUES
-('user-id-here', 'AI-Powered Recipe Assistant', 'An app that suggests recipes based on ingredients you have at home', 'Food Tech', 'concept', 50000, ARRAY['mentor', 'co-founder'], ARRAY['React Native', 'AI/ML', 'Backend'], ARRAY['ai', 'food', 'mobile']);
-*/
