@@ -11,17 +11,29 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://trusted-cdn.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https:",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
-              "frame-src 'none'",
-              "object-src 'none'",
-              "base-uri 'self'"
-            ].join('; ')
+            value: process.env.NODE_ENV === 'development' 
+              ? [
+                  "default-src 'self'",
+                  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://trusted-cdn.com",
+                  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                  "font-src 'self' https://fonts.gstatic.com",
+                  "img-src 'self' data: https:",
+                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co ws://localhost:*",
+                  "frame-src 'none'",
+                  "object-src 'none'",
+                  "base-uri 'self'"
+                ].join('; ')
+              : [
+                  "default-src 'self'",
+                  "script-src 'self' 'unsafe-inline' https://trusted-cdn.com",
+                  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                  "font-src 'self' https://fonts.gstatic.com",
+                  "img-src 'self' data: https:",
+                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+                  "frame-src 'none'",
+                  "object-src 'none'",
+                  "base-uri 'self'"
+                ].join('; ')
           }
         ]
       }
