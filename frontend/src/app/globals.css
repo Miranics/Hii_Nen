@@ -339,6 +339,10 @@ body {
 .stagger-delay-3 { animation-delay: 0.3s; }
 .stagger-delay-4 { animation-delay: 0.4s; }
 .stagger-delay-5 { animation-delay: 0.5s; }
+.stagger-delay-6 { animation-delay: 0.6s; }
+.stagger-delay-7 { animation-delay: 0.7s; }
+.stagger-delay-8 { animation-delay: 0.8s; }
+.stagger-delay-9 { animation-delay: 0.9s; }
 
 /* === SPECIAL TEXT EFFECTS === */
 
@@ -359,4 +363,74 @@ body {
     color: #2563eb;
     -webkit-text-fill-color: initial;
   }
+}
+
+/* === ENHANCED ANIMATIONS FOR NEW SECTIONS === */
+
+/* Counter animation */
+@keyframes countUp {
+  from { 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+/* Testimonial card animation */
+@keyframes testimonialFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+/* Enhanced pulse for CTA buttons */
+@keyframes pulseCTA {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+    transform: scale(1.05);
+  }
+}
+
+/* Gradient background animation */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* === NEW ANIMATION CLASSES === */
+
+.animate-countUp {
+  animation: countUp 1s ease-out forwards;
+}
+
+.animate-testimonialFloat {
+  animation: testimonialFloat 6s ease-in-out infinite;
+}
+
+.animate-pulseCTA {
+  animation: pulseCTA 2s infinite;
+}
+
+.animate-gradientShift {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Enhanced card hover with lift and glow */
+.card-hover-enhanced {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-enhanced:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 30px rgba(37, 99, 235, 0.3);
 }
