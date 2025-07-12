@@ -4,52 +4,17 @@ import Navbar from "../components/Navbar";
 
 export default function Home() {
   return (
-    <div className="relative flex flex-col min-h-screen justify-between bg-gradient-to-br from-white via-blue-50 to-purple-100 dark:from-black dark:via-gray-900 dark:to-blue-900 text-foreground font-sans overflow-x-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-white via-blue-50 to-purple-100 dark:from-black dark:via-gray-900 dark:to-blue-900 text-foreground font-sans">
       {/* Navigation */}
       <Navbar />
       
       {/* === ANIMATED BACKGROUND ELEMENTS === */}
-      <div className="absolute top-[-200px] right-[-200px] w-[600px] h-[600px] bg-gradient-to-r from-blue-400 to-purple-600 rounded-full blur-[120px] opacity-30 animate-float -z-10"></div>
-      <div className="absolute bottom-[-100px] left-[-100px] w-[400px] h-[400px] bg-gradient-to-r from-pink-400 to-blue-500 rounded-full blur-[80px] opacity-25 animate-float stagger-delay-2 -z-10"></div>
-      <div className="absolute top-1/2 left-1/4 w-[200px] h-[200px] bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-[60px] opacity-20 animate-float stagger-delay-3 -z-10"></div>
-
-      {/* === HEADER === */}
-      <header className="w-full px-8 py-4 flex justify-between items-center max-w-6xl mx-auto sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur z-10 border-b border-gray-200 dark:border-gray-800 animate-slideInDown">
-        <div className="flex items-center gap-2 animate-slideInLeft">
-          <div className="animate-scaleRotate">
-            <Image
-              src="/hiinen-logo.svg"
-              alt="HiiNen Logo"
-              width={40}
-              height={40}
-              className="animate-spin-slow"
-            />
-          </div>
-          <span className="text-2xl font-extrabold text-blue-600 tracking-tight hover:text-purple-600 transition-colors duration-300">
-            HiiNen
-          </span>
-        </div>
-        <nav className="flex gap-6 text-sm font-medium animate-slideInRight">
-          <Link href="/features" className="hover:text-blue-600 transition-all transform hover:scale-110 animate-fadeInUp stagger-delay-1">
-            Features
-          </Link>
-          <Link href="/about" className="hover:text-blue-600 transition-all transform hover:scale-110 animate-fadeInUp stagger-delay-2">
-            About
-          </Link>
-          <Link href="/contact" className="hover:text-blue-600 transition-all transform hover:scale-110 animate-fadeInUp stagger-delay-3">
-            Contact
-          </Link>
-          <Link href="/faq" className="hover:text-blue-600 transition-all transform hover:scale-110 animate-fadeInUp stagger-delay-4">
-            FAQ
-          </Link>
-          <Link href="/terms" className="hover:text-blue-600 transition-all transform hover:scale-110 animate-fadeInUp stagger-delay-5">
-            Terms
-          </Link>
-        </nav>
-      </header>
+      <div className="fixed top-[-200px] right-[-200px] w-[600px] h-[600px] bg-gradient-to-r from-blue-400 to-purple-600 rounded-full blur-[120px] opacity-30 animate-float -z-10"></div>
+      <div className="fixed bottom-[-100px] left-[-100px] w-[400px] h-[400px] bg-gradient-to-r from-pink-400 to-blue-500 rounded-full blur-[80px] opacity-25 animate-float stagger-delay-2 -z-10"></div>
+      <div className="fixed top-1/2 left-1/4 w-[200px] h-[200px] bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-[60px] opacity-20 animate-float stagger-delay-3 -z-10"></div>
 
       {/* === MAIN HERO === */}
-      <main className="flex flex-col items-center justify-center flex-grow px-8 text-center py-32 sm:py-48 max-w-5xl mx-auto relative">
+      <main className="flex flex-col items-center justify-center px-8 text-center py-24 sm:py-32 max-w-5xl mx-auto relative min-h-[80vh]">
         {/* Floating decorative elements */}
         <div className="absolute top-10 left-10 w-20 h-20 bg-blue-400 rounded-full opacity-20 animate-float"></div>
         <div className="absolute top-32 right-20 w-16 h-16 bg-purple-400 rounded-full opacity-30 animate-float stagger-delay-2"></div>
@@ -67,7 +32,7 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row gap-4 animate-fadeInScale stagger-delay-3">
           <Link
-            href="/features"
+            href="/signup"
             className="rounded-full bg-blue-600 text-white px-8 py-3 text-sm font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all transform hover:scale-105 animate-pulseGlow"
           >
             Get Started
@@ -97,8 +62,8 @@ export default function Home() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
             {/* Core Features Row 1 */}
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-blue-100 to-blue-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-1">
-              <div className="animate-float">
-                <Image src="/idea.svg" alt="AI Ideation" width={48} height={48} />
+              <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-8 h-8 bg-white rounded-md"></div>
               </div>
               <h3 className="text-lg font-bold">AI-Powered Ideation</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -107,8 +72,8 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-purple-100 to-purple-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-2">
-              <div className="animate-float stagger-delay-1">
-                <Image src="/validate.svg" alt="Smart Validation" width={48} height={48} />
+              <div className="w-16 h-16 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-8 h-8 bg-white rounded-full border-4 border-purple-600"></div>
               </div>
               <h3 className="text-lg font-bold">Smart Validation</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -117,8 +82,12 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-green-100 to-green-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-3">
-              <div className="animate-float stagger-delay-2">
-                <Image src="/mentor.svg" alt="Expert Mentorship" width={48} height={48} />
+              <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="flex gap-1">
+                  <div className="w-2 h-6 bg-white rounded-full"></div>
+                  <div className="w-2 h-8 bg-white rounded-full"></div>
+                  <div className="w-2 h-4 bg-white rounded-full"></div>
+                </div>
               </div>
               <h3 className="text-lg font-bold">Expert Mentorship</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -128,8 +97,11 @@ export default function Home() {
             
             {/* Additional Features Row 2 */}
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-orange-100 to-orange-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-1">
-              <div className="animate-float">
-                <Image src="/funding.svg" alt="Funding Assistant" width={48} height={48} />
+              <div className="w-16 h-16 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-8 h-6 bg-white rounded-md relative">
+                  <div className="absolute top-1 left-1 w-2 h-1 bg-orange-600 rounded"></div>
+                  <div className="absolute top-3 left-1 w-3 h-1 bg-orange-600 rounded"></div>
+                </div>
               </div>
               <h3 className="text-lg font-bold">Funding Assistant</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -138,8 +110,13 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-pink-100 to-pink-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-2">
-              <div className="animate-float stagger-delay-1">
-                <Image src="/analytics.svg" alt="Market Analytics" width={48} height={48} />
+              <div className="w-16 h-16 bg-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="grid grid-cols-2 gap-1">
+                  <div className="w-3 h-3 bg-white rounded"></div>
+                  <div className="w-3 h-2 bg-white rounded"></div>
+                  <div className="w-3 h-2 bg-white rounded"></div>
+                  <div className="w-3 h-3 bg-white rounded"></div>
+                </div>
               </div>
               <h3 className="text-lg font-bold">Market Analytics</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
@@ -148,8 +125,11 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-indigo-100 to-indigo-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-3">
-              <div className="animate-float stagger-delay-2">
-                <Image src="/launch.svg" alt="Launch Accelerator" width={48} height={48} />
+              <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-8 h-8 bg-white rounded-full relative">
+                  <div className="absolute inset-2 border-2 border-indigo-600 rounded-full"></div>
+                  <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-indigo-600 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
               </div>
               <h3 className="text-lg font-bold">Launch Accelerator</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
