@@ -9,13 +9,9 @@ export default function SignUpPage() {
         <div className="max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity w-fit">
             <div className="animate-spin-slow">
-              <Image
-                src="/hiinen-logo.svg"
-                alt="HiiNen Logo"
-                width={32}
-                height={32}
-                className="dark:brightness-0 dark:invert"
-              />
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">H</span>
+              </div>
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               HiiNen
@@ -193,13 +189,15 @@ export default function SignUpPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all">
-                <div className="w-4 h-4 mr-2 bg-red-500 rounded-sm"></div>
-                Google
+              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium hover:bg-gray-50 transition-all">
+                <span className="bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent font-semibold">
+                  Google
+                </span>
               </button>
-              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all">
-                <div className="w-4 h-4 mr-2 bg-blue-600 rounded-sm"></div>
-                LinkedIn
+              <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium hover:bg-gray-50 transition-all">
+                <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent font-semibold">
+                  LinkedIn
+                </span>
               </button>
             </div>
           </div>
