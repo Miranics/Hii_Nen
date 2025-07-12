@@ -3,13 +3,13 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
-const connectDB = require('./config/database');
+const { initializeDatabase } = require('./config/supabase');
 
 // Load environment variables
 dotenv.config();
 
-// Connect to database
-connectDB();
+// Initialize Supabase connection
+initializeDatabase();
 
 const app = express();
 
