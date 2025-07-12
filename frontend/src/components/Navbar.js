@@ -9,13 +9,15 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <Image
-                src="/hiinen-logo.svg"
-                alt="HiiNen Logo"
-                width={32}
-                height={32}
-                className="dark:brightness-0 dark:invert"
-              />
+              <div className="animate-spin-slow">
+                <Image
+                  src="/hiinen-logo.svg"
+                  alt="HiiNen Logo"
+                  width={32}
+                  height={32}
+                  className="dark:brightness-0 dark:invert"
+                />
+              </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 HiiNen
               </span>

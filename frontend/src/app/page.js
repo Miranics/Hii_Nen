@@ -62,7 +62,7 @@ export default function Home() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 w-full">
             {/* Core Features Row 1 */}
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-blue-100 to-blue-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-1">
-              <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg animate-bounce-gentle">
                 <div className="w-8 h-8 bg-white rounded-md"></div>
               </div>
               <h3 className="text-lg font-bold">AI-Powered Ideation</h3>
@@ -72,7 +72,7 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-purple-100 to-purple-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-2">
-              <div className="w-16 h-16 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg animate-bounce-gentle stagger-delay-1">
                 <div className="w-8 h-8 bg-white rounded-full border-4 border-purple-600"></div>
               </div>
               <h3 className="text-lg font-bold">Smart Validation</h3>
@@ -82,7 +82,7 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-green-100 to-green-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-3">
-              <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center shadow-lg animate-bounce-gentle stagger-delay-2">
                 <div className="flex gap-1">
                   <div className="w-2 h-6 bg-white rounded-full"></div>
                   <div className="w-2 h-8 bg-white rounded-full"></div>
@@ -97,7 +97,7 @@ export default function Home() {
             
             {/* Additional Features Row 2 */}
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-orange-100 to-orange-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-1">
-              <div className="w-16 h-16 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg animate-bounce-gentle">
                 <div className="w-8 h-6 bg-white rounded-md relative">
                   <div className="absolute top-1 left-1 w-2 h-1 bg-orange-600 rounded"></div>
                   <div className="absolute top-3 left-1 w-3 h-1 bg-orange-600 rounded"></div>
@@ -110,7 +110,7 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-pink-100 to-pink-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-2">
-              <div className="w-16 h-16 bg-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 bg-pink-600 rounded-xl flex items-center justify-center shadow-lg animate-bounce-gentle stagger-delay-1">
                 <div className="grid grid-cols-2 gap-1">
                   <div className="w-3 h-3 bg-white rounded"></div>
                   <div className="w-3 h-2 bg-white rounded"></div>
@@ -125,7 +125,7 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col items-center gap-4 p-6 rounded-xl bg-gradient-to-b from-indigo-100 to-indigo-200 dark:from-gray-800 dark:to-gray-700 card-hover-effect animate-fadeInUp stagger-delay-3">
-              <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg animate-bounce-gentle stagger-delay-2">
                 <div className="w-8 h-8 bg-white rounded-full relative">
                   <div className="absolute inset-2 border-2 border-indigo-600 rounded-full"></div>
                   <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-indigo-600 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>

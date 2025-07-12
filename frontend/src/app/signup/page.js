@@ -3,20 +3,35 @@ import Link from "next/link";
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Side - Branding & Benefits */}
-      <div className="lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-8 flex flex-col justify-center text-white">
-        <div className="max-w-md mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <Image
-              src="/hiinen-logo.svg"
-              alt="HiiNen Logo"
-              width={40}
-              height={40}
-              className="brightness-0 invert"
-            />
-            <span className="text-2xl font-bold">HiiNen</span>
-          </div>
+    <div className="min-h-screen flex flex-col">
+      {/* Header with Logo */}
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 p-4">
+        <div className="max-w-7xl mx-auto">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity w-fit">
+            <div className="animate-spin-slow">
+              <Image
+                src="/hiinen-logo.svg"
+                alt="HiiNen Logo"
+                width={32}
+                height={32}
+                className="dark:brightness-0 dark:invert"
+              />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              HiiNen
+            </span>
+          </Link>
+        </div>
+      </header>
+
+      <div className="flex flex-col lg:flex-row flex-1">
+        {/* Left Side - Branding & Benefits */}
+        <div className="lg:w-1/2 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-8 flex flex-col justify-center text-white">
+          <div className="max-w-md mx-auto">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold mb-4">Join HiiNen Today</h2>
+              <p className="text-blue-100">Start your entrepreneurial journey with AI-powered guidance</p>
+            </div>
           
           <h1 className="text-3xl sm:text-4xl font-bold mb-6 animate-fadeInUp">
             Your AI Co-Founder Awaits
@@ -179,16 +194,17 @@ export default function SignUpPage() {
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all">
-                <span className="mr-2">🔍</span>
+                <div className="w-4 h-4 mr-2 bg-red-500 rounded-sm"></div>
                 Google
               </button>
               <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-all">
-                <span className="mr-2">👨‍💼</span>
+                <div className="w-4 h-4 mr-2 bg-blue-600 rounded-sm"></div>
                 LinkedIn
               </button>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
