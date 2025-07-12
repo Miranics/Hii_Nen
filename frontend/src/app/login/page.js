@@ -18,17 +18,50 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
+    console.log('🚀 Starting login with email:', email);
+
+    // Basic validation
+    if (!email.trim()) {
+      setError('Email is required');
+      setLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Password is required');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('📧 Attempting login...');
       const { data, error } = await signIn(email, password);
       
+      console.log('✅ Login result:', { data, error });
+      
       if (error) {
-        setError(error.message);
+        console.error('❌ Login error:', error);
+        if (error.message.includes('Invalid login credentials')) {
+          setError('Invalid email or password. Please check your credentials.');
+        } else if (error.message.includes('Email not confirmed')) {
+          setError('Please verify your email address before logging in. Check your inbox for a verification link.');
+        } else {
+          setError(error.message || 'Login failed');
+        }
       } else {
+        console.log('🎉 Login successful!');
+        console.log('User:', data.user);
+        console.log('Session:', data.session);
+        
+        // Show success message
+        alert(`✅ Login successful!\n\nWelcome back, ${data.user.email}!`);
+        
         // Redirect to dashboard on successful login
         router.push('/dashboard');
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.error('💥 Unexpected login error:', err);
+      setError(`Unexpected error: ${err.message}`);
     } finally {
       setLoading(false);
     }

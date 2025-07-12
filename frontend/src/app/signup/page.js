@@ -30,6 +30,8 @@ export default function SignUpPage() {
     setLoading(true);
     setError('');
 
+    console.log('🚀 Starting signup with data:', formData);
+
     // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
@@ -43,7 +45,20 @@ export default function SignUpPage() {
       return;
     }
 
+    if (!formData.fullName.trim()) {
+      setError('Full name is required');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setError('Email is required');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('📧 Attempting signup...');
       const { data, error } = await signUp(
         formData.email, 
         formData.password, 
@@ -51,15 +66,29 @@ export default function SignUpPage() {
         formData.userType
       );
       
+      console.log('✅ Signup result:', { data, error });
+      
       if (error) {
-        setError(error.message);
+        console.error('❌ Signup error:', error);
+        setError(error.message || 'Signup failed');
       } else {
-        // Show success message or redirect
-        alert('Account created successfully! Please check your email to verify your account.');
+        console.log('🎉 Signup successful!');
+        // Show success message
+        alert(`✅ Account created successfully!\n\nEmail: ${formData.email}\nPlease check your email to verify your account before logging in.`);
+        // Reset form
+        setFormData({
+          fullName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          userType: 'entrepreneur'
+        });
+        // Redirect to login
         router.push('/login');
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.error('💥 Unexpected signup error:', err);
+      setError(`Unexpected error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -144,32 +173,28 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="John"
-                  required
-                />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                ❌ {error}
               </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Doe"
-                  required
-                />
-              </div>
+            )}
+            
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="John Doe"
+                required
+                disabled={loading}
+              />
             </div>
 
             <div>
