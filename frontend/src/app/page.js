@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
   return (
     <div className="relative flex flex-col min-h-screen justify-between bg-gradient-to-br from-white via-blue-50 to-purple-100 dark:from-black dark:via-gray-900 dark:to-blue-900 text-foreground font-sans overflow-x-hidden">
+      {/* Navigation */}
+      <Navbar />
+      
       {/* === ANIMATED BACKGROUND ELEMENTS === */}
       <div className="absolute top-[-200px] right-[-200px] w-[600px] h-[600px] bg-gradient-to-r from-blue-400 to-purple-600 rounded-full blur-[120px] opacity-30 animate-float -z-10"></div>
       <div className="absolute bottom-[-100px] left-[-100px] w-[400px] h-[400px] bg-gradient-to-r from-pink-400 to-blue-500 rounded-full blur-[80px] opacity-25 animate-float stagger-delay-2 -z-10"></div>
