@@ -98,3 +98,25 @@ export const signInWithLinkedIn = async () => {
   
   return { data, error }
 }
+
+// Update user profile
+export const updateProfile = async (updates) => {
+  try {
+    console.log('🔄 Updating user profile:', updates);
+    
+    const { data, error } = await supabase.auth.updateUser({
+      data: updates
+    });
+
+    if (error) {
+      console.error('❌ Profile update error:', error);
+      throw error;
+    }
+
+    console.log('✅ Profile updated successfully:', data);
+    return { data, error: null };
+  } catch (error) {
+    console.error('💥 Profile update failed:', error);
+    return { data: null, error };
+  }
+};

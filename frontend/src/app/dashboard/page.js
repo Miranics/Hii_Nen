@@ -76,9 +76,13 @@ export default function DashboardPage() {
     return user?.email?.split('@')[0] || 'User';
   };
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-purple-100 dark:from-black dark:via-gray-900 dark:to-blue-900">
+      {/* Animated Background Elements */}
+      <div className="fixed top-[-200px] right-[-200px] w-[600px] h-[600px] bg-gradient-to-r from-blue-400 to-purple-600 rounded-full blur-[120px] opacity-20 animate-float -z-10"></div>
+      <div className="fixed bottom-[-100px] left-[-100px] w-[400px] h-[400px] bg-gradient-to-r from-pink-400 to-blue-500 rounded-full blur-[80px] opacity-15 animate-float stagger-delay-2 -z-10"></div>
+
       {/* Navigation Header */}
-      <nav className="bg-white dark:bg-gray-800 shadow-sm border-b">
+      <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -88,37 +92,39 @@ export default function DashboardPage() {
                   alt="HiiNen Logo"
                   width={32}
                   height={32}
-                  className="dark:brightness-0 dark:invert"
+                  className="dark:brightness-0 dark:invert-0"
                 />
                 <span className="text-xl font-bold text-gray-900 dark:text-white">HiiNen</span>
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-500 transition-colors relative">
-                <span className="text-xl">🔔</span>
+              <button className="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5-5h5l-5-5H9l-5 5h5l-5 5h5z" />
+                </svg>
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
               </button>
               <div className="relative group">
-                <button className="h-8 w-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm hover:from-blue-600 hover:to-purple-600 transition-all">
+                <button className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-semibold text-sm hover:from-blue-600 hover:to-purple-600 transition-all">
                   {getUserInitials(user?.email)}
                 </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100">
-                  <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                <div className="absolute right-0 mt-2 w-48 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-xl shadow-xl py-2 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100 border border-white/20">
+                  <div className="px-4 py-3 border-b border-gray-200/50 dark:border-gray-700/50">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{getUserName()}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
                   </div>
-                  <Link href="/dashboard/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    ⚙️ Settings
+                  <Link href="/dashboard/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-700/50">
+                    Settings
                   </Link>
-                  <Link href="/dashboard/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    👤 Profile
+                  <Link href="/dashboard/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-700/50">
+                    Profile
                   </Link>
                   <button 
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100/50 dark:hover:bg-gray-700/50"
                   >
-                    🚪 Logout
+                    Sign Out
                   </button>
                 </div>
               </div>
@@ -129,76 +135,103 @@ export default function DashboardPage() {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white dark:bg-gray-800 shadow-sm h-screen sticky top-0">
+        <div className="w-64 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm h-screen sticky top-0 border-r border-white/20">
           <div className="p-6">
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Dashboard Overview */}
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Overview</h3>
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Overview</h3>
                 <nav className="space-y-2">
-                  <Link href="/dashboard" className="bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">📊</span>
+                  <Link href="/dashboard" className="bg-gradient-to-r from-blue-500 to-purple-500 text-white group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
                     Dashboard
                   </Link>
-                  <Link href="/dashboard/progress" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">📈</span>
-                    Progress
-                  </Link>
-                </nav>
-              </div>
-
-              {/* AI Co-Founder */}
-              <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">AI Co-Founder</h3>
-                <nav className="space-y-2">
-                  <Link href="/dashboard/idea-validation" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">💡</span>
-                    Idea Validation
-                  </Link>
-                  <Link href="/dashboard/mentorship" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">👨‍🏫</span>
-                    AI Mentorship
-                  </Link>
-                  <Link href="/dashboard/funding" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">💰</span>
-                    Funding Tools
-                  </Link>
-                  <Link href="/dashboard/analytics" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">📊</span>
+                  <Link href="/dashboard/analytics" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
                     Analytics
                   </Link>
                 </nav>
               </div>
 
-              {/* Tools */}
+              {/* AI Features */}
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Tools</h3>
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">AI Co-Founder</h3>
                 <nav className="space-y-2">
-                  <Link href="/dashboard/networking" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">🤝</span>
-                    Networking
+                  <Link href="/dashboard/idea-validation" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Idea Validation
                   </Link>
-                  <Link href="/dashboard/resources" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">📚</span>
-                    Resources
+                  <Link href="/dashboard/mentorship" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    AI Mentorship
+                  </Link>
+                  <Link href="/dashboard/market-research" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    Market Research
+                  </Link>
+                  <Link href="/dashboard/business-plan" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Business Planning
                   </Link>
                 </nav>
               </div>
 
-              {/* Settings */}
+              {/* Growth Tools */}
               <div>
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Account</h3>
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Growth</h3>
                 <nav className="space-y-2">
-                  <Link href="/dashboard/settings" className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
-                    <span className="mr-3">⚙️</span>
+                  <Link href="/dashboard/funding" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Funding Hub
+                  </Link>
+                  <Link href="/dashboard/networking" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Networking
+                  </Link>
+                  <Link href="/dashboard/resources" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    Learning Hub
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Account */}
+              <div>
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Account</h3>
+                <nav className="space-y-2">
+                  <Link href="/dashboard/settings" className="text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
                     Settings
                   </Link>
                   <button 
                     onClick={handleLogout}
-                    className="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg w-full text-left"
+                    className="text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full text-left transition-all"
                   >
-                    <span className="mr-3">🚪</span>
-                    Logout
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
                   </button>
                 </nav>
               </div>
@@ -212,74 +245,82 @@ export default function DashboardPage() {
             {/* Welcome Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 animate-fadeInUp">
-                Welcome back, {getUserName()}! 👋
+                Good morning, {getUserName()}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 animate-fadeInUp stagger-delay-1">
-                Here's what's happening with your startup journey today.
+                Here's your startup progress overview for today.
               </p>
             </div>
 
-            {/* Quick Stats */}
+            {/* Progress Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm animate-fadeInUp stagger-delay-1">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/20 animate-fadeInUp stagger-delay-1 dashboard-card">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
-                      <span className="text-blue-600 dark:text-blue-400">💡</span>
+                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Ideas Validated</dt>
-                      <dd className="text-lg font-medium text-gray-900 dark:text-white">{stats.ideasValidated}</dd>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.ideasValidated}</dd>
                     </dl>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm animate-fadeInUp stagger-delay-2">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/20 animate-fadeInUp stagger-delay-2 dashboard-card">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center">
-                      <span className="text-green-600 dark:text-green-400">🚀</span>
+                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Launch Progress</dt>
-                      <dd className="text-lg font-medium text-gray-900 dark:text-white">{stats.launchProgress}%</dd>
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Business Score</dt>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.launchProgress}/100</dd>
                     </dl>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm animate-fadeInUp stagger-delay-3">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/20 animate-fadeInUp stagger-delay-3 dashboard-card">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center">
-                      <span className="text-purple-600 dark:text-purple-400">🤝</span>
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Connections</dt>
-                      <dd className="text-lg font-medium text-gray-900 dark:text-white">{stats.connections}</dd>
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Network Connections</dt>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.connections}</dd>
                     </dl>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm animate-fadeInUp stagger-delay-4">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/20 animate-fadeInUp stagger-delay-4 dashboard-card">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/50 rounded-lg flex items-center justify-center">
-                      <span className="text-orange-600 dark:text-orange-400">💰</span>
+                    <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Funding Ready</dt>
-                      <dd className="text-lg font-medium text-gray-900 dark:text-white">{stats.fundingReadiness}%</dd>
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Funding Readiness</dt>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.fundingReadiness}%</dd>
                     </dl>
                   </div>
                 </div>
@@ -288,104 +329,126 @@ export default function DashboardPage() {
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* AI Recommendations */}
+              {/* AI Insights */}
               <div className="lg:col-span-2">
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 animate-fadeInUp stagger-delay-2">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                    🤖 AI Co-Founder Recommendations
-                  </h2>
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-6 animate-fadeInUp stagger-delay-2 border border-white/20">
+                  <div className="flex items-center mb-6">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      AI-Powered Insights
+                    </h2>
+                  </div>
                   <div className="space-y-4">
-                    <div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-r-lg">
-                      <h3 className="font-medium text-blue-900 dark:text-blue-100">Market Research Opportunity</h3>
+                    <div className="border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-r-xl">
+                      <h3 className="font-medium text-blue-900 dark:text-blue-100">Market Validation Opportunity</h3>
                       <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                        Your SaaS idea shows 300% growth potential in the productivity space. Consider surveying 100 potential customers this week.
+                        Based on your profile, there's a 73% market fit potential for SaaS solutions in your industry. Consider validating with 50+ customer interviews.
                       </p>
                       <button 
-                        onClick={() => router.push('/dashboard/market-research')}
-                        className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                        onClick={() => router.push('/dashboard/idea-validation')}
+                        className="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
                       >
-                        Start Survey →
+                        Start Validation Process →
                       </button>
                     </div>
 
-                    <div className="border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20 p-4 rounded-r-lg">
-                      <h3 className="font-medium text-green-900 dark:text-green-100">Mentor Match Available</h3>
+                    <div className="border-l-4 border-green-500 bg-green-50/50 dark:bg-green-900/20 p-4 rounded-r-xl">
+                      <h3 className="font-medium text-green-900 dark:text-green-100">Funding Milestone Achieved</h3>
                       <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                        Sarah Chen (ex-Google PM) has 90% compatibility with your project. She's available for a 30-min intro call.
-                      </p>
-                      <button 
-                        onClick={() => router.push('/dashboard/mentorship')}
-                        className="mt-2 text-sm text-green-600 dark:text-green-400 hover:underline"
-                      >
-                        Schedule Call →
-                      </button>
-                    </div>
-
-                    <div className="border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20 p-4 rounded-r-lg">
-                      <h3 className="font-medium text-purple-900 dark:text-purple-100">Funding Milestone</h3>
-                      <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
-                        You're 2 steps away from seed funding readiness. Complete your financial projections and pitch deck.
+                        Your business plan completeness has reached 85%. You're now eligible for early-stage funding applications and pitch competitions.
                       </p>
                       <button 
                         onClick={() => router.push('/dashboard/funding')}
-                        className="mt-2 text-sm text-purple-600 dark:text-purple-400 hover:underline"
+                        className="mt-3 text-sm text-green-600 dark:text-green-400 hover:underline font-medium"
                       >
-                        View Checklist →
+                        Explore Funding Options →
+                      </button>
+                    </div>
+
+                    <div className="border-l-4 border-purple-500 bg-purple-50/50 dark:bg-purple-900/20 p-4 rounded-r-xl">
+                      <h3 className="font-medium text-purple-900 dark:text-purple-100">Strategic Partnership Alert</h3>
+                      <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
+                        3 potential co-founders and 2 strategic partners match your startup profile. AI suggests connecting within the next 7 days.
+                      </p>
+                      <button 
+                        onClick={() => router.push('/dashboard/networking')}
+                        className="mt-3 text-sm text-purple-600 dark:text-purple-400 hover:underline font-medium"
+                      >
+                        View Connections →
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Actions */}
+              {/* Action Center */}
               <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 animate-fadeInUp stagger-delay-3">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-                  <div className="space-y-3">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-6 animate-fadeInUp stagger-delay-3 border border-white/20">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
+                  <div className="space-y-4">
                     <button 
                       onClick={() => router.push('/dashboard/idea-validation')}
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-3 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-[1.02]"
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4 rounded-xl font-medium hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-[1.02] flex items-center justify-center"
                     >
-                      💡 Validate New Idea
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      Validate New Idea
                     </button>
                     <button 
                       onClick={() => router.push('/dashboard/mentorship')}
-                      className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all"
+                      className="w-full bg-white/70 dark:bg-gray-700/70 backdrop-blur-md border border-white/20 text-gray-700 dark:text-gray-300 px-6 py-4 rounded-xl font-medium hover:bg-white/90 dark:hover:bg-gray-700/90 transition-all flex items-center justify-center"
                     >
-                      🤖 Chat with AI Mentor
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      Ask AI Mentor
                     </button>
                     <button 
-                      onClick={() => router.push('/dashboard/analytics')}
-                      className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-all"
+                      onClick={() => router.push('/dashboard/business-plan')}
+                      className="w-full bg-white/70 dark:bg-gray-700/70 backdrop-blur-md border border-white/20 text-gray-700 dark:text-gray-300 px-6 py-4 rounded-xl font-medium hover:bg-white/90 dark:hover:bg-gray-700/90 transition-all flex items-center justify-center"
                     >
-                      📊 Generate Report
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                      Update Business Plan
                     </button>
                   </div>
                 </div>
 
-                {/* Recent Activity */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 animate-fadeInUp stagger-delay-4">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
+                {/* Progress Tracker */}
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-6 animate-fadeInUp stagger-delay-4 border border-white/20">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">This Week's Goals</h2>
                   <div className="space-y-4">
                     <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2"></div>
-                      <div>
-                        <p className="text-sm text-gray-900 dark:text-white">Completed idea validation for "TaskFlow"</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mt-1">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Complete market research survey</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Completed 2 days ago</p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
-                      <div>
-                        <p className="text-sm text-gray-900 dark:text-white">Connected with Alex Rodriguez</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">1 day ago</p>
+                      <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-1">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Finalize MVP feature list</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">In progress • Due tomorrow</p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-purple-400 rounded-full mt-2"></div>
-                      <div>
-                        <p className="text-sm text-gray-900 dark:text-white">Updated business model canvas</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">3 days ago</p>
+                      <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full mt-1"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">Schedule investor meetings</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Pending • Due Friday</p>
                       </div>
                     </div>
                   </div>
