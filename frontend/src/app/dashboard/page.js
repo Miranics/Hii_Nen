@@ -92,7 +92,6 @@ export default function DashboardPage() {
                   alt="HiiNen Logo"
                   width={32}
                   height={32}
-                  className="dark:brightness-0 dark:invert-0"
                 />
                 <span className="text-xl font-bold text-gray-900 dark:text-white">HiiNen</span>
               </div>

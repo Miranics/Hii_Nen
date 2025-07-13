@@ -9,76 +9,68 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
-  const [settings, setSettings] = useState({
-    fullName: '',
+  const [activeTab, setActiveTab] = useState('profile');
+  const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
-    phone: '',
+    bio: '',
+    location: '',
     company: '',
-    industry: '',
-    experience: '',
-    notifications: {
-      email: true,
-      push: true,
-      marketing: false,
-      weekly_reports: true
-    },
-    privacy: {
-      profile_visibility: 'public',
-      show_email: false,
-      show_phone: false
-    },
-    preferences: {
-      theme: 'system',
-      language: 'en',
-      timezone: 'UTC'
-    }
+    website: '',
+    linkedin: ''
   });
 
   useEffect(() => {
-    loadUserSettings();
+    loadUserData();
   }, []);
 
-  const loadUserSettings = async () => {
+  const loadUserData = async () => {
     try {
       const currentUser = await getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
-        setSettings(prev => ({
-          ...prev,
-          fullName: currentUser.user_metadata?.full_name || '',
+        setProfile({
+          firstName: currentUser.user_metadata?.firstName || '',
+          lastName: currentUser.user_metadata?.lastName || '',
           email: currentUser.email || '',
-          phone: currentUser.user_metadata?.phone || '',
+          bio: currentUser.user_metadata?.bio || '',
+          location: currentUser.user_metadata?.location || '',
           company: currentUser.user_metadata?.company || '',
-          industry: currentUser.user_metadata?.industry || '',
-          experience: currentUser.user_metadata?.experience || ''
-        }));
+          website: currentUser.user_metadata?.website || '',
+          linkedin: currentUser.user_metadata?.linkedin || ''
+        });
       }
     } catch (error) {
-      console.error('Error loading settings:', error);
+      console.error('Error loading user data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSave = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setSaving(true);
     setMessage('');
     
     try {
-      // Update user profile
+      // Update user profile with comprehensive data
       await updateProfile({
-        full_name: settings.fullName,
-        phone: settings.phone,
-        company: settings.company,
-        industry: settings.industry,
-        experience: settings.experience
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        bio: profile.bio,
+        location: profile.location,
+        company: profile.company,
+        website: profile.website,
+        linkedin: profile.linkedin
       });
       
-      setMessage('Settings saved successfully!');
-      setTimeout(() => setMessage(''), 3000);
+      setMessage('Settings saved successfully! Your profile has been updated.');
+      setTimeout(() => setMessage(''), 5000);
     } catch (error) {
       console.error('Error saving settings:', error);
       setMessage('Error saving settings. Please try again.');
+      setTimeout(() => setMessage(''), 5000);
     } finally {
       setSaving(false);
     }
@@ -131,19 +123,52 @@ export default function SettingsPage() {
           {/* Settings Navigation */}
           <div className="lg:col-span-1">
             <nav className="space-y-2">
-              <button className="w-full text-left px-4 py-3 bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-xl text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+              <button 
+                onClick={() => setActiveTab('profile')}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                  activeTab === 'profile' 
+                    ? 'bg-white/70 dark:bg-gray-800/70 backdrop-blur-md text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                }`}
+              >
                 Profile
               </button>
-              <button className="w-full text-left px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-xl transition-colors">
+              <button 
+                onClick={() => setActiveTab('notifications')}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                  activeTab === 'notifications' 
+                    ? 'bg-white/70 dark:bg-gray-800/70 backdrop-blur-md text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                }`}
+              >
                 Notifications
               </button>
-              <button className="w-full text-left px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-xl transition-colors">
+              <button 
+                onClick={() => setActiveTab('privacy')}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                  activeTab === 'privacy' 
+                    ? 'bg-white/70 dark:bg-gray-800/70 backdrop-blur-md text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                }`}
+              >
                 Privacy
               </button>
-              <button className="w-full text-left px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-xl transition-colors">
+              <button 
+                onClick={() => setActiveTab('preferences')}
+                className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                  activeTab === 'preferences' 
+                    ? 'bg-white/70 dark:bg-gray-800/70 backdrop-blur-md text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                }`}
+              >
                 Preferences
               </button>
-              <button className="w-full text-left px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
+              <button 
+                onClick={() => setActiveTab('account')}
+                className={`w-full text-left px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all ${
+                  activeTab === 'account' ? 'bg-red-50 dark:bg-red-900/20' : ''
+                }`}
+              >
                 Account
               </button>
             </nav>
@@ -151,188 +176,337 @@ export default function SettingsPage() {
 
           {/* Settings Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-8 border border-white/20">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">Profile Settings</h2>
+            <div className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-md rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-xl p-8">
               
-              <div className="space-y-6">
-                {/* Personal Information */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Personal Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.fullName}
-                        onChange={(e) => setSettings(prev => ({ ...prev, fullName: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:bg-gray-700/50 dark:text-white"
-                        placeholder="John Doe"
-                      />
+              {/* Profile Tab */}
+              {activeTab === 'profile' && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Profile Settings</h2>
+                  
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          First Name
+                        </label>
+                        <input
+                          type="text"
+                          value={profile.firstName}
+                          onChange={(e) => setProfile({...profile, firstName: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Last Name
+                        </label>
+                        <input
+                          type="text"
+                          value={profile.lastName}
+                          onChange={(e) => setProfile({...profile, lastName: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
                     </div>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Email Address
+                        Email
                       </label>
                       <input
                         type="email"
-                        value={settings.email}
+                        value={profile.email}
                         disabled
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                        className="w-full px-4 py-3 rounded-xl bg-gray-100/50 dark:bg-gray-700/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
                       />
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Email cannot be changed</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Email cannot be changed</p>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        value={settings.phone}
-                        onChange={(e) => setSettings(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:bg-gray-700/50 dark:text-white"
-                        placeholder="+1 (555) 123-4567"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Company
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.company}
-                        onChange={(e) => setSettings(prev => ({ ...prev, company: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:bg-gray-700/50 dark:text-white"
-                        placeholder="Your Company"
-                      />
-                    </div>
-                  </div>
-                </div>
 
-                {/* Professional Information */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Professional Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Industry
+                        Bio
                       </label>
-                      <select
-                        value={settings.industry}
-                        onChange={(e) => setSettings(prev => ({ ...prev, industry: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:bg-gray-700/50 dark:text-white"
+                      <textarea
+                        value={profile.bio}
+                        onChange={(e) => setProfile({...profile, bio: e.target.value})}
+                        rows={4}
+                        className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Tell us about yourself..."
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          value={profile.location}
+                          onChange={(e) => setProfile({...profile, location: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="City, Country"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Company
+                        </label>
+                        <input
+                          type="text"
+                          value={profile.company}
+                          onChange={(e) => setProfile({...profile, company: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Your company"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Website
+                        </label>
+                        <input
+                          type="url"
+                          value={profile.website}
+                          onChange={(e) => setProfile({...profile, website: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="https://yourwebsite.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          LinkedIn
+                        </label>
+                        <input
+                          type="url"
+                          value={profile.linkedin}
+                          onChange={(e) => setProfile({...profile, linkedin: e.target.value})}
+                          className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="https://linkedin.com/in/yourprofile"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={saving}
+                        className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                       >
-                        <option value="">Select Industry</option>
-                        <option value="technology">Technology</option>
-                        <option value="healthcare">Healthcare</option>
-                        <option value="finance">Finance</option>
-                        <option value="education">Education</option>
-                        <option value="retail">Retail</option>
-                        <option value="manufacturing">Manufacturing</option>
-                        <option value="other">Other</option>
-                      </select>
+                        {saving ? 'Saving...' : 'Save Changes'}
+                      </button>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Experience Level
-                      </label>
-                      <select
-                        value={settings.experience}
-                        onChange={(e) => setSettings(prev => ({ ...prev, experience: e.target.value }))}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all dark:bg-gray-700/50 dark:text-white"
-                      >
-                        <option value="">Select Experience</option>
-                        <option value="first-time">First-time entrepreneur</option>
-                        <option value="some-experience">Some startup experience</option>
-                        <option value="experienced">Experienced founder</option>
-                        <option value="serial">Serial entrepreneur</option>
-                      </select>
+                  </form>
+                </div>
+              )}
+
+              {/* Notifications Tab */}
+              {activeTab === 'notifications' && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Notification Settings</h2>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Email Notifications</h3>
+                      <div className="space-y-4">
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">New mentorship opportunities</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Idea validation updates</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Weekly progress reports</span>
+                          <input type="checkbox" className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Marketing recommendations</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Push Notifications</h3>
+                      <div className="space-y-4">
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Browser notifications</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Mobile app notifications</span>
+                          <input type="checkbox" className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Notification Preferences */}
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Notification Preferences</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Email Notifications</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Receive updates via email</p>
+              {/* Privacy Tab */}
+              {activeTab === 'privacy' && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Privacy Settings</h2>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Profile Visibility</h3>
+                      <div className="space-y-4">
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Make profile public</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Show in mentor directory</span>
+                          <input type="checkbox" className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Allow direct messages</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={settings.notifications.email}
-                          onChange={(e) => setSettings(prev => ({
-                            ...prev,
-                            notifications: { ...prev.notifications, email: e.target.checked }
-                          }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Push Notifications</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Receive push notifications in browser</p>
+
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Data Sharing</h3>
+                      <div className="space-y-4">
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Share analytics data</span>
+                          <input type="checkbox" className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
+                        <label className="flex items-center justify-between">
+                          <span className="text-gray-700 dark:text-gray-300">Allow marketing communications</span>
+                          <input type="checkbox" defaultChecked className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                        </label>
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={settings.notifications.push}
-                          onChange={(e) => setSettings(prev => ({
-                            ...prev,
-                            notifications: { ...prev.notifications, push: e.target.checked }
-                          }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">Weekly Reports</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Receive weekly progress reports</p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={settings.notifications.weekly_reports}
-                          onChange={(e) => setSettings(prev => ({
-                            ...prev,
-                            notifications: { ...prev.notifications, weekly_reports: e.target.checked }
-                          }))}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                      </label>
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Save Button */}
-                <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-end">
-                    <button
-                      onClick={handleSave}
-                      disabled={saving}
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {saving ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Saving...
+              {/* Preferences Tab */}
+              {activeTab === 'preferences' && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Preferences</h2>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Interface</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Theme
+                          </label>
+                          <select className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Auto (System)</option>
+                            <option>Light</option>
+                            <option>Dark</option>
+                          </select>
                         </div>
-                      ) : (
-                        'Save Changes'
-                      )}
-                    </button>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Language
+                          </label>
+                          <select className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>English</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                            <option>German</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Startup Preferences</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Industry Focus
+                          </label>
+                          <select className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Technology</option>
+                            <option>Healthcare</option>
+                            <option>Finance</option>
+                            <option>Education</option>
+                            <option>E-commerce</option>
+                            <option>Other</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Stage
+                          </label>
+                          <select className="w-full px-4 py-3 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Idea Stage</option>
+                            <option>MVP Development</option>
+                            <option>Early Stage</option>
+                            <option>Growth Stage</option>
+                            <option>Scale Stage</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {/* Account Tab */}
+              {activeTab === 'account' && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Account Settings</h2>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-white/40 dark:bg-gray-800/40 rounded-xl p-6 border border-white/30 dark:border-gray-700/30">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Security</h3>
+                      <div className="space-y-4">
+                        <button className="w-full text-left px-6 py-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-medium text-blue-900 dark:text-blue-100">Change Password</div>
+                              <div className="text-sm text-blue-600 dark:text-blue-400">Update your account password</div>
+                            </div>
+                            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </button>
+                        <button className="w-full text-left px-6 py-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="font-medium text-green-900 dark:text-green-100">Two-Factor Authentication</div>
+                              <div className="text-sm text-green-600 dark:text-green-400">Enable 2FA for enhanced security</div>
+                            </div>
+                            <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-6 border border-red-200 dark:border-red-800">
+                      <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-4">Danger Zone</h3>
+                      <div className="space-y-4">
+                        <button className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors font-medium">
+                          Delete Account
+                        </button>
+                        <p className="text-sm text-red-600 dark:text-red-400">
+                          This action cannot be undone. All your data will be permanently deleted.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
         </div>
