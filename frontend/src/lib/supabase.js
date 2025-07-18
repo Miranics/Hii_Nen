@@ -9,7 +9,7 @@ console.log('URL:', supabaseUrl)
 console.log('Key exists:', !!supabaseAnonKey)
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase environment variables!')
+  console.error(' Missing Supabase environment variables!')
   console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl)
   console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!supabaseAnonKey)
 }
@@ -18,7 +18,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Auth helpers with enhanced error handling
 export const signUp = async (email, password, fullName, userType) => {
-  console.log('🔄 Starting signup process...')
+  console.log(' Starting signup process...')
   console.log('Email:', email)
   console.log('Full Name:', fullName)
   console.log('User Type:', userType)
@@ -47,7 +47,7 @@ export const signUp = async (email, password, fullName, userType) => {
 }
 
 export const signIn = async (email, password) => {
-  console.log('🔄 Starting signin process...')
+  console.log(' Starting signin process...')
   console.log('Email:', email)
   
   try {
@@ -102,7 +102,7 @@ export const signInWithLinkedIn = async () => {
 // Update user profile
 export const updateProfile = async (updates) => {
   try {
-    console.log('🔄 Updating user profile:', updates);
+    console.log(' Updating user profile:', updates);
     
     // Get current user
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -116,7 +116,7 @@ export const updateProfile = async (updates) => {
     });
 
     if (authError) {
-      console.error('❌ Auth update error:', authError);
+      console.error(' Auth update error:', authError);
       throw authError;
     }
 
@@ -144,14 +144,14 @@ export const updateProfile = async (updates) => {
       .select();
 
     if (profileError) {
-      console.error('❌ Profile table update error:', profileError);
+      console.error(' Profile table update error:', profileError);
       // Don't throw error for profile table issues in case table doesn't exist yet
       console.warn('Profile table update failed, but auth update succeeded');
     } else {
-      console.log('✅ Profile table updated successfully:', profileUpdateData);
+      console.log(' Profile table updated successfully:', profileUpdateData);
     }
 
-    console.log('✅ Profile updated successfully:', authData);
+    console.log(' Profile updated successfully:', authData);
     return { data: authData, error: null };
   } catch (error) {
     console.error('💥 Profile update failed:', error);

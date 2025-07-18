@@ -19,7 +19,7 @@ if (!supabaseServiceKey) {
 }
 
 console.log('🔗 Supabase URL:', supabaseUrl);
-console.log('🔑 Supabase keys loaded successfully');
+console.log(' Supabase keys loaded successfully');
 
 // Public client for frontend operations
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -40,15 +40,15 @@ const initializeDatabase = async () => {
     const { data, error } = await supabase.from('users').select('count', { count: 'exact', head: true });
     
     if (error && error.code !== 'PGRST116') { // PGRST116 = relation does not exist (expected for new projects)
-      console.log('ℹ️  Database tables not yet created. Please run the setup script.');
+      console.log('  Database tables not yet created. Please run the setup script.');
     } else {
-      console.log('✅ Supabase connected successfully!');
+      console.log(' Supabase connected successfully!');
     }
   } catch (error) {
-    console.error('❌ Supabase connection error:', error.message);
+    console.error(' Supabase connection error:', error.message);
     
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔄 Continuing without database connection (development mode)');
+      console.log(' Continuing without database connection (development mode)');
       return;
     }
     

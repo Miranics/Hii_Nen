@@ -7,13 +7,13 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log(`📊 MongoDB Connected: ${conn.connection.host}`);
+    console.log(` MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('❌ Database connection error:', error.message);
+    console.error(' Database connection error:', error.message);
     
     // For development, we'll continue without DB for now
     if (process.env.NODE_ENV === 'development') {
-      console.log('🔄 Continuing without database connection (development mode)');
+      console.log(' Continuing without database connection (development mode)');
       return;
     }
     
