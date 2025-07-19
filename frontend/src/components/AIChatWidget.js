@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { callHiiNenAI, API_CONFIG } from '../lib/api';
 
 export default function AIChatWidget({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,18 +46,10 @@ export default function AIChatWidget({ user }) {
         content: msg.message
       }));
 
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: inputMessage,
-          conversationHistory: conversationHistory.slice(-10) // Keep last 10 messages for context
-        }),
+      const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_CHAT, {
+        message: inputMessage,
+        conversationHistory: conversationHistory.slice(-10) // Keep last 10 messages for context
       });
-
-      const data = await response.json();
 
       if (data.success) {
         const aiMessage = {

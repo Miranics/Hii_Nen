@@ -1,8 +1,80 @@
+'use client';
+
+import { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import { callHiiNenAI, API_CONFIG } from "../../lib/api";
 
 export default function DemoPage() {
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      sender: 'ai',
+      message: "Hi! I'm HiiNen, your AI co-founder. I'm here to help you build and scale your startup. What's your business idea?",
+      timestamp: new Date().toISOString()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendDemoMessage = async () => {
+    if (!inputMessage.trim() || isLoading) return;
+
+    const userMessage = {
+      id: Date.now(),
+      sender: 'user',
+      message: inputMessage,
+      timestamp: new Date().toISOString()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      // Get conversation history for context
+      const conversationHistory = messages.map(msg => ({
+        role: msg.sender === 'ai' ? 'assistant' : 'user',
+        content: msg.message
+      }));
+
+      const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_CHAT, {
+        message: inputMessage,
+        conversationHistory: conversationHistory.slice(-6) // Keep last 6 messages for context
+      });
+
+      if (data.success) {
+        const aiMessage = {
+          id: Date.now() + 1,
+          sender: 'ai',
+          message: data.response,
+          timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        throw new Error(data.error || 'Failed to get AI response');
+      }
+    } catch (error) {
+      console.error('Demo chat error:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        sender: 'ai',
+        message: 'I apologize, but I\'m having trouble connecting right now. This is a demo - in the real platform, I\'d be ready to help!',
+        timestamp: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendDemoMessage();
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-blue-900">
       <Navbar />
@@ -20,53 +92,75 @@ export default function DemoPage() {
 
         {/* Demo Interface */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Chat Interface */}
+          {/* Interactive Chat Interface */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fadeInUp stagger-delay-2">
             <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-              🤖 Chat with AI Co-Founder
+              🤖 Live Chat with HiiNen AI
             </h2>
             
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 h-64 overflow-y-auto mb-4">
               <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                    AI
+                {messages.map((msg) => (
+                  <div key={msg.id} className={`flex items-start space-x-3 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
+                    {msg.sender === 'ai' && (
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                        H
+                      </div>
+                    )}
+                    <div className={`rounded-lg p-3 max-w-xs ${
+                      msg.sender === 'ai' 
+                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white' 
+                        : 'bg-blue-500 text-white'
+                    }`}>
+                      <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                    </div>
+                    {msg.sender === 'user' && (
+                      <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                        You
+                      </div>
+                    )}
                   </div>
-                  <div className="bg-white dark:bg-gray-600 rounded-lg p-3 max-w-xs">
-                    <p className="text-sm">Hi! I'm your AI Co-Founder. What's your startup idea?</p>
-                  </div>
-                </div>
+                ))}
                 
-                <div className="flex items-start space-x-3 justify-end">
-                  <div className="bg-blue-500 text-white rounded-lg p-3 max-w-xs">
-                    <p className="text-sm">I want to build a productivity app for remote teams</p>
+                {isLoading && (
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                      H
+                    </div>
+                    <div className="bg-white dark:bg-gray-600 rounded-lg p-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                    You
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                    AI
-                  </div>
-                  <div className="bg-white dark:bg-gray-600 rounded-lg p-3 max-w-xs">
-                    <p className="text-sm">Great idea! Remote team productivity is a $12B market. Let's validate this with 3 key questions: 1) What specific pain point does your app solve? 2) Who's your target customer? 3) What makes you different from Slack or Asana?</p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
             
             <div className="flex space-x-2">
-              <input 
-                type="text" 
-                placeholder="Type your message..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask HiiNen about your startup idea..."
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                disabled={isLoading}
               />
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+              <button
+                onClick={sendDemoMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              >
                 Send
               </button>
             </div>
+            
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              This is a live demo connected to HiiNen AI. Try asking about market validation, business planning, or funding!
+            </p>
           </div>
 
           {/* Validation Tools */}

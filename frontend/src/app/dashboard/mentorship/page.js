@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { callHiiNenAI, API_CONFIG } from '../../../lib/api';
 
 export default function MentorshipPage() {
   const [messages, setMessages] = useState([
@@ -36,33 +37,38 @@ export default function MentorshipPage() {
     setNewMessage('');
     setLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = {
-        "How do I validate my business idea?": "Great question! Here's a structured approach to validate your idea:\n\n1. **Problem-Solution Fit**: Talk to 20-30 potential customers to confirm the problem exists\n2. **Market Research**: Analyze market size, competition, and trends\n3. **MVP Testing**: Build a simple version and test with real users\n4. **Financial Validation**: Ensure people will pay for your solution\n\nWould you like me to dive deeper into any of these steps?",
-        
-        "What should be in my MVP?": "Your MVP should include:\n\n1. **Core Features Only**: Focus on solving the main problem\n2. **User Authentication**: If needed for your app\n3. **Basic UI/UX**: Simple but functional design\n4. **Analytics**: Track user behavior and engagement\n5. **Feedback Mechanism**: Way for users to share thoughts\n\nRemember: MVP = Minimum VIABLE Product, not minimum features. What's your idea so I can give more specific advice?",
-        
-        "How do I find my target market?": "Finding your target market involves:\n\n1. **Create User Personas**: Age, income, pain points, behaviors\n2. **Analyze Competitors**: Who are they targeting?\n3. **Use Analytics**: Google Analytics, social media insights\n4. **Direct Surveys**: Ask potential customers directly\n5. **Test Different Segments**: A/B test with different audiences\n\nStart broad, then narrow down based on who responds best to your solution.",
-        
-        "When should I start looking for funding?": "Consider funding when you have:\n\n1. **Proven Traction**: Users, revenue, or strong engagement metrics\n2. **Clear Business Model**: How you'll make money\n3. **Scalability Plan**: How you'll grow with investment\n4. **Strong Team**: Co-founders or key employees\n5. **Market Validation**: Proof people want your product\n\nBootstrap as long as possible - it keeps you focused and gives you more equity.",
-        
-        "How do I build a founding team?": "Building a strong team:\n\n1. **Complementary Skills**: Technical + Business + Domain expertise\n2. **Shared Vision**: Everyone believes in the mission\n3. **Work History**: People you've worked with before\n4. **Equity Structure**: Fair but performance-based\n5. **Cultural Fit**: Similar work ethic and values\n\nDon't rush this - a bad co-founder is worse than no co-founder.",
-        
-        "What legal structure should I choose?": "For most startups, I recommend:\n\n1. **LLC**: Simple, flexible, good for small teams\n2. **C-Corp**: Better for raising investment, employee stock options\n3. **Delaware C-Corp**: Gold standard for VC-backed startups\n\nFactors to consider:\n- Funding plans\n- Tax implications\n- Number of founders\n- Employee equity plans\n\nConsult with a startup lawyer for specific advice!"
-      };
+    try {
+      const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_CHAT, {
+        message: message,
+        conversationHistory: messages.slice(-8).map(msg => ({
+          role: msg.role === 'assistant' ? 'assistant' : 'user',
+          content: msg.content
+        })),
+        context: 'mentorship'
+      });
 
-      const response = responses[message] || "That's an interesting question! Based on my experience with thousands of startups, I'd recommend starting with customer discovery. Talk to your potential users, understand their pain points, and validate that your solution addresses a real need. Would you like me to help you create a customer interview script?";
-
+      if (data.success) {
+        const aiMessage = {
+          role: 'assistant',
+          content: data.response,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        throw new Error(data.error || 'Failed to get AI response');
+      }
+    } catch (error) {
+      console.error('Mentorship chat error:', error);
+      // Fallback response
       const aiMessage = {
         role: 'assistant',
-        content: response,
+        content: "I'm having trouble connecting right now, but I'm here to help! As your AI co-founder, I can assist with business strategy, funding advice, market validation, and more. Try asking me again in a moment, or check if the backend server is running.",
         timestamp: new Date()
       };
-
       setMessages(prev => [...prev, aiMessage]);
-      setLoading(false);
-    }, 1500);
+    }
+
+    setLoading(false);
   };
 
   return (

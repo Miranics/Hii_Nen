@@ -6,10 +6,14 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, signOut } from '@/lib/supabase';
 import AIChatWidget from '@/components/AIChatWidget';
+import { callHiiNenAI, API_CONFIG } from '@/lib/api';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [aiInsights, setAiInsights] = useState([]);
+  const [aiRecommendations, setAiRecommendations] = useState([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   const [stats, setStats] = useState({
     ideasValidated: 0,
     launchProgress: 0,
@@ -21,6 +25,69 @@ export default function DashboardPage() {
   useEffect(() => {
     checkUser();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchAIInsights();
+    }
+  }, [user]);
+
+  const fetchAIInsights = async () => {
+    setInsightsLoading(true);
+    try {
+      const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_INSIGHTS, {
+        userProfile: {
+          email: user?.email,
+          metadata: user?.user_metadata,
+          stats: stats
+        },
+        requestType: 'dashboard_insights'
+      });
+      
+      if (data.success) {
+        setAiInsights(data.insights || []);
+        setAiRecommendations(data.recommendations || []);
+      } else {
+        // Fallback to static insights if API fails
+        setAiInsights([
+          {
+            type: 'market_validation',
+            title: 'Market Validation Opportunity',
+            message: 'Based on your profile, I\'ve identified a 73% market fit potential for SaaS solutions in your industry. Consider validating with 50+ customer interviews before your next funding round.',
+            color: 'blue',
+            action: 'Ask HiiNen'
+          },
+          {
+            type: 'funding',
+            title: 'Funding Readiness Assessment',
+            message: 'Your metrics show 85% readiness for Series A. Focus on improving monthly recurring revenue growth rate and customer acquisition cost optimization.',
+            color: 'green',
+            action: 'Get Strategy'
+          },
+          {
+            type: 'growth',
+            title: 'Growth Acceleration Tip',
+            message: 'Your current trajectory suggests implementing a referral program could increase user acquisition by 40%. I can help you design one tailored to your business model.',
+            color: 'purple',
+            action: 'Learn More'
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching AI insights:', error);
+      // Use static insights as fallback
+      setAiInsights([
+        {
+          type: 'market_validation',
+          title: 'Market Validation Opportunity',
+          message: 'Based on your profile, I\'ve identified a 73% market fit potential for SaaS solutions in your industry.',
+          color: 'blue',
+          action: 'Ask HiiNen'
+        }
+      ]);
+    }
+    setInsightsLoading(false);
+  };
 
   const checkUser = async () => {
     try {
@@ -348,113 +415,34 @@ export default function DashboardPage() {
                     </span>
                   </div>
                   <div className="space-y-4">
-                    <div className="border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-r-xl">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-medium text-blue-900 dark:text-blue-100">Market Validation Opportunity</h3>
-                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                            Based on your profile, I've identified a 73% market fit potential for SaaS solutions in your industry. Consider validating with 50+ customer interviews before your next funding round.
-                          </p>
-                        </div>
-                        <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-4 whitespace-nowrap">
-                          Ask HiiNen
-                        </button>
+                    {insightsLoading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span className="ml-3 text-gray-600 dark:text-gray-400">HiiNen is analyzing your data...</span>
                       </div>
-                    </div>
-                    <div className="border-l-4 border-green-500 bg-green-50/50 dark:bg-green-900/20 p-4 rounded-r-xl">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-medium text-green-900 dark:text-green-100">Funding Readiness Assessment</h3>
-                          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                            Your metrics show 85% readiness for Series A. Focus on improving monthly recurring revenue growth rate and customer acquisition cost optimization.
-                          </p>
+                    ) : (
+                      aiInsights.map((insight, index) => (
+                        <div key={index} className={`border-l-4 border-${insight.color}-500 bg-${insight.color}-50/50 dark:bg-${insight.color}-900/20 p-4 rounded-r-xl`}>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h3 className={`font-medium text-${insight.color}-900 dark:text-${insight.color}-100`}>{insight.title}</h3>
+                              <p className={`text-sm text-${insight.color}-700 dark:text-${insight.color}-300 mt-1`}>
+                                {insight.message}
+                              </p>
+                            </div>
+                            <button className={`text-xs text-${insight.color}-600 dark:text-${insight.color}-400 hover:underline ml-4 whitespace-nowrap`}>
+                              {insight.action}
+                            </button>
+                          </div>
                         </div>
-                        <button className="text-xs text-green-600 dark:text-green-400 hover:underline ml-4 whitespace-nowrap">
-                          Get Strategy
-                        </button>
+                      ))
+                    )}
+                    
+                    {aiInsights.length === 0 && !insightsLoading && (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-400">Ask HiiNen for personalized insights!</p>
                       </div>
-                    </div>
-                    <div className="border-l-4 border-purple-500 bg-purple-50/50 dark:bg-purple-900/20 p-4 rounded-r-xl">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-medium text-purple-900 dark:text-purple-100">Growth Acceleration Tip</h3>
-                          <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
-                            Your current trajectory suggests implementing a referral program could increase user acquisition by 40%. I can help you design one tailored to your business model.
-                          </p>
-                        </div>
-                        <button className="text-xs text-purple-600 dark:text-purple-400 hover:underline ml-4 whitespace-nowrap">
-                          Learn More
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div>
-                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-6 animate-fadeInUp stagger-delay-3 border border-white/20">
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-                  <div className="space-y-3">
-                    <button className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl text-left hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800/50 dark:hover:to-blue-700/50 transition-all">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">Chat with HiiNen AI</span>
-                      </div>
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-
-                    <Link href="/dashboard/market-research" className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 rounded-xl text-left hover:from-green-100 hover:to-green-200 dark:hover:from-green-800/50 dark:hover:to-green-700/50 transition-all">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">Market Analysis</span>
-                      </div>
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-
-                    <Link href="/dashboard/funding" className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-xl text-left hover:from-purple-100 hover:to-purple-200 dark:hover:from-purple-800/50 dark:hover:to-purple-700/50 transition-all">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">Explore Funding</span>
-                      </div>
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
-
-                  {/* HiiNen AI Tasks */}
-                  <div className="mt-6">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">HiiNen AI Recommendations</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mt-1">
-                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">Market Research Completed</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Great progress!</p>
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
