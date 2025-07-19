@@ -1,14 +1,19 @@
-const OpenAI = require('openai');
+import ModelClient, { isUnexpected } from "@azure-rest/ai-inference";
+import { AzureKeyCredential } from "@azure/core-auth";
 
-// Initialize OpenAI client for GitHub Models
-const openai = new OpenAI({
-  baseURL: 'https://models.inference.ai.azure.com',
-  apiKey: process.env.GITHUB_TOKEN,
-});
+const token = process.env.GITHUB_TOKEN;
+const endpoint = "https://models.github.ai/inference";
+const model = "openai/gpt-4.1";
+
+// Initialize Azure AI client for GitHub Models
+const client = ModelClient(
+  endpoint,
+  new AzureKeyCredential(token),
+);
 
 // AI Co-founder personality and settings
 const AI_COFOUNDER_CONFIG = {
-  model: 'gpt-4o-mini', // GitHub Models identifier (let's start with mini for testing)
+  model: model,
   systemPrompt: `You are Alex, an experienced AI co-founder and business mentor for HiiNen, a platform that helps entrepreneurs build successful startups. 
 
 Your personality:
@@ -49,17 +54,23 @@ async function getAIResponse(userMessage, conversationHistory = []) {
       }
     ];
 
-    const completion = await openai.chat.completions.create({
-      model: AI_COFOUNDER_CONFIG.model,
-      messages: messages,
-      temperature: AI_COFOUNDER_CONFIG.temperature,
-      max_tokens: AI_COFOUNDER_CONFIG.maxTokens,
+    const response = await client.path("/chat/completions").post({
+      body: {
+        messages: messages,
+        temperature: AI_COFOUNDER_CONFIG.temperature,
+        max_tokens: AI_COFOUNDER_CONFIG.maxTokens,
+        model: AI_COFOUNDER_CONFIG.model
+      }
     });
+
+    if (isUnexpected(response)) {
+      throw response.body.error;
+    }
 
     return {
       success: true,
-      response: completion.choices[0].message.content,
-      usage: completion.usage
+      response: response.body.choices[0].message.content,
+      usage: response.body.usage
     };
   } catch (error) {
     console.error('AI Co-founder Error:', error);
@@ -107,7 +118,7 @@ async function generateMarketAnalysis(businessIdea, industry) {
   return await getAIResponse(prompt);
 }
 
-module.exports = {
+export {
   getAIResponse,
   generateBusinessInsights,
   generateMarketAnalysis,

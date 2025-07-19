@@ -1,4 +1,4 @@
-const { getAIResponse } = require('./config/ai');
+import { getAIResponse } from './config/ai.js';
 
 async function testAI() {
   console.log('Testing AI connection...');

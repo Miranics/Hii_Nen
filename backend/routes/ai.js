@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import { getAIResponse, generateBusinessInsights, generateMarketAnalysis } from '../config/ai.js';
+
 const router = express.Router();
-const { getAIResponse, generateBusinessInsights, generateMarketAnalysis } = require('../config/ai');
 
 // Chat with AI Co-founder
 router.post('/chat', async (req, res) => {
@@ -126,4 +127,4 @@ router.get('/health', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

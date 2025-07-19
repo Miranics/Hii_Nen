@@ -1,6 +1,7 @@
 {
   "name": "hiinen-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "HiiNen AI Co-Founder Backend API",
   "main": "server.js",
   "scripts": {
@@ -17,6 +18,9 @@
   "author": "HiiNen Team",
   "license": "MIT",
   "dependencies": {
+    "@azure-rest/ai-inference": "latest",
+    "@azure/core-auth": "latest", 
+    "@azure/core-sse": "latest",
     "@supabase/supabase-js": "^2.50.5",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -25,8 +29,7 @@
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.7",
-    "openai": "^5.10.1"
+    "nodemailer": "^6.9.7"
   },
   "devDependencies": {
     "jest": "^29.7.0",
