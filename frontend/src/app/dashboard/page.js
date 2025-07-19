@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, signOut } from '@/lib/supabase';
+import AIChatWidget from '@/components/AIChatWidget';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -328,26 +329,67 @@ export default function DashboardPage() {
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* AI Insights */}
+              {/* HiiNen AI Insights */}
               <div className="lg:col-span-2">
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-6 animate-fadeInUp stagger-delay-2 border border-white/20">
-                  <div className="flex items-center mb-6">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        HiiNen AI Insights
+                      </h2>
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      AI-Powered Insights
-                    </h2>
+                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full text-xs font-medium">
+                      Real-time
+                    </span>
                   </div>
                   <div className="space-y-4">
                     <div className="border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 p-4 rounded-r-xl">
-                      <h3 className="font-medium text-blue-900 dark:text-blue-100">Market Validation Opportunity</h3>
-                      <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                        Based on your profile, there's a 73% market fit potential for SaaS solutions in your industry. Consider validating with 50+ customer interviews.
-                      </p>
-                      <button 
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-medium text-blue-900 dark:text-blue-100">Market Validation Opportunity</h3>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                            Based on your profile, I've identified a 73% market fit potential for SaaS solutions in your industry. Consider validating with 50+ customer interviews before your next funding round.
+                          </p>
+                        </div>
+                        <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-4 whitespace-nowrap">
+                          Ask HiiNen
+                        </button>
+                      </div>
+                    </div>
+                    <div className="border-l-4 border-green-500 bg-green-50/50 dark:bg-green-900/20 p-4 rounded-r-xl">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-medium text-green-900 dark:text-green-100">Funding Readiness Assessment</h3>
+                          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                            Your metrics show 85% readiness for Series A. Focus on improving monthly recurring revenue growth rate and customer acquisition cost optimization.
+                          </p>
+                        </div>
+                        <button className="text-xs text-green-600 dark:text-green-400 hover:underline ml-4 whitespace-nowrap">
+                          Get Strategy
+                        </button>
+                      </div>
+                    </div>
+                    <div className="border-l-4 border-purple-500 bg-purple-50/50 dark:bg-purple-900/20 p-4 rounded-r-xl">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-medium text-purple-900 dark:text-purple-100">Growth Acceleration Tip</h3>
+                          <p className="text-sm text-purple-700 dark:text-purple-300 mt-1">
+                            Your current trajectory suggests implementing a referral program could increase user acquisition by 40%. I can help you design one tailored to your business model.
+                          </p>
+                        </div>
+                        <button className="text-xs text-purple-600 dark:text-purple-400 hover:underline ml-4 whitespace-nowrap">
+                          Learn More
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> 
                         onClick={() => router.push('/dashboard/idea-validation')}
                         className="mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
                       >
@@ -457,6 +499,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* AI Chat Widget */}
+      <AIChatWidget user={user} />
     </div>
   );
 }

@@ -1,9 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const dotenv = require('dotenv');
-const { initializeDatabase } = require('./config/supabase');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
+import { initializeDatabase } from './config/supabase.js';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+import ideaRoutes from './routes/ideas.js';
+import mentorRoutes from './routes/mentors.js';
+import aiRoutes from './routes/ai.js';
 
 // Load environment variables
 dotenv.config();
@@ -35,11 +40,11 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/ideas', require('./routes/ideas'));
-app.use('/api/mentors', require('./routes/mentors'));
-app.use('/api/ai', require('./routes/ai'));
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/ideas', ideaRoutes);
+app.use('/api/mentors', mentorRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
