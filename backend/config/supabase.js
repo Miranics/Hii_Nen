@@ -1,7 +1,8 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
 // Ensure dotenv is loaded
-require('dotenv').config();
+dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
@@ -56,7 +57,7 @@ const initializeDatabase = async () => {
   }
 };
 
-module.exports = {
+export {
   supabase,
   supabaseAdmin,
   initializeDatabase

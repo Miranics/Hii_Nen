@@ -1,6 +1,6 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { supabase, supabaseAdmin } = require('../config/supabase');
+import express from 'express';
+import { body, validationResult } from 'express-validator';
+import { supabase, supabaseAdmin } from '../config/supabase.js';
 
 const router = express.Router();
 
@@ -232,4 +232,4 @@ router.post('/google', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
