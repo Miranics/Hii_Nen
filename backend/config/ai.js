@@ -100,22 +100,66 @@ async function getAIResponse(userMessage, conversationHistory = []) {
 }
 
 // Function to generate business insights for dashboard
-async function generateBusinessInsights(userData) {
-  const prompt = `Based on this entrepreneur's profile, provide 3 key business insights and recommendations:
-  
-  User Data: ${JSON.stringify(userData)}
-  
-  Please provide insights in this JSON format:
-  {
-    "insights": [
-      {"title": "Insight Title", "description": "Brief insight", "action": "Recommended action"},
-      {"title": "Insight Title", "description": "Brief insight", "action": "Recommended action"},
-      {"title": "Insight Title", "description": "Brief insight", "action": "Recommended action"}
-    ],
-    "priority": "high|medium|low",
-    "focusArea": "Area to focus on"
-  }`;
+async function generateBusinessInsights(userData, requestType = 'dashboard_insights') {
+  console.log('AI generateBusinessInsights - Processing request type:', requestType);
+  console.log('AI generateBusinessInsights - User data:', JSON.stringify(userData, null, 2));
 
+  let prompt;
+  
+  if (requestType === 'dashboard_insights') {
+    prompt = `As HiiNen, your AI co-founder and business mentor, analyze this entrepreneur's profile and provide personalized business insights for their dashboard.
+
+User Profile: ${JSON.stringify(userData)}
+
+Provide insights in this exact JSON format:
+{
+  "success": true,
+  "insights": [
+    {"title": "Key Business Insight 1", "description": "Detailed analysis of current business status", "action": "Specific actionable recommendation", "priority": "high"},
+    {"title": "Key Business Insight 2", "description": "Market opportunity or challenge identified", "action": "Strategic next step", "priority": "medium"},
+    {"title": "Key Business Insight 3", "description": "Growth or optimization opportunity", "action": "Tactical implementation step", "priority": "medium"}
+  ],
+  "recommendations": [
+    {"type": "immediate", "title": "Immediate Action", "description": "What to do right now"},
+    {"type": "short_term", "title": "This Week", "description": "Weekly goal"},
+    {"type": "long_term", "title": "This Month", "description": "Monthly objective"}
+  ],
+  "focusArea": "Primary area to focus on this week",
+  "confidence": 95
+}`;
+  } else if (requestType === 'idea_validation') {
+    prompt = `As HiiNen, validate this business idea and provide structured feedback:
+
+Idea Data: ${JSON.stringify(userData)}
+
+Provide validation in this exact JSON format:
+{
+  "success": true,
+  "validation": {
+    "score": 85,
+    "strengths": ["Strong market demand", "Clear value proposition"],
+    "weaknesses": ["High competition", "Regulatory challenges"],
+    "opportunities": ["Market gap identified", "Timing advantage"],
+    "threats": ["Market saturation", "Economic factors"],
+    "recommendations": [
+      {"priority": "high", "action": "Conduct market research"},
+      {"priority": "medium", "action": "Develop MVP"},
+      {"priority": "low", "action": "Build strategic partnerships"}
+    ]
+  },
+  "nextSteps": ["Step 1", "Step 2", "Step 3"]
+}`;
+  } else {
+    // Generic insights format
+    prompt = `As HiiNen, provide business insights for this data:
+
+Data: ${JSON.stringify(userData)}
+Request Type: ${requestType}
+
+Provide insights in JSON format with "success": true and relevant data structure.`;
+  }
+
+  console.log('AI generateBusinessInsights - Sending prompt to model');
   return await getAIResponse(prompt);
 }
 

@@ -30,17 +30,26 @@ router.post('/chat', async (req, res) => {
 // Get business insights for dashboard
 router.post('/insights', async (req, res) => {
   try {
-    const { userData } = req.body;
+    console.log('AI Insights Route - Request received');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    
+    const { userProfile, userData, requestType } = req.body;
 
-    if (!userData) {
+    // Handle both old and new data formats
+    const dataToProcess = userProfile || userData;
+    
+    if (!dataToProcess) {
+      console.log('AI Insights Route - No user data provided');
       return res.status(400).json({
         success: false,
         error: 'User data is required'
       });
     }
 
-    const insights = await generateBusinessInsights(userData);
+    console.log('AI Insights Route - Processing request type:', requestType);
+    const insights = await generateBusinessInsights(dataToProcess, requestType);
     
+    console.log('AI Insights Route - Response generated:', insights.success);
     res.json(insights);
   } catch (error) {
     console.error('AI Insights Error:', error);
