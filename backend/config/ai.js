@@ -1,9 +1,17 @@
 import ModelClient, { isUnexpected } from "@azure-rest/ai-inference";
 import { AzureKeyCredential } from "@azure/core-auth";
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const token = process.env.GITHUB_TOKEN;
 const endpoint = "https://models.github.ai/inference";
 const model = "openai/gpt-4.1";
+
+// Debug: Check if token is loaded
+console.log('GitHub Token loaded:', token ? 'Yes' : 'No');
+console.log('Token length:', token ? token.length : 0);
 
 // Initialize Azure AI client for GitHub Models
 const client = ModelClient(
