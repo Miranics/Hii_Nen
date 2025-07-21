@@ -2,6 +2,8 @@
 
 **Project:** HiiNen (Tiv: "Se Hii Nen" = "Let's Start")
 
+**Status:** Deploying to Production 🚀
+
 **Purpose:** HiiNen is an AI-powered co-founder platform that helps first-time entrepreneurs ideate, validate, and grow startup ideas.
 
 **Core Features:**
