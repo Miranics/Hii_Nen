@@ -300,4 +300,4 @@ For support, feature requests, or business inquiries, please open an issue on Gi
 ---
 
 *HiiNen - Empowering entrepreneurs with AI-driven business intelligence and personalized startup guidance.*
-- Document your code with clear comments so Copilot can help generate consistent patterns.
+
