@@ -1,8 +1,31 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser } from '@/lib/supabase';
 import Navbar from "../components/Navbar";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is already authenticated and redirect to dashboard
+    const checkAuth = async () => {
+      try {
+        const { user, error } = await getCurrentUser();
+        if (user && !error) {
+          console.log('✅ User already authenticated, redirecting to dashboard');
+          router.push('/dashboard');
+        }
+      } catch (err) {
+        console.log('No authenticated user, staying on homepage');
+      }
+    };
+
+    checkAuth();
+  }, [router]);
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-white via-blue-50 to-purple-100 dark:from-black dark:via-gray-900 dark:to-blue-900 text-foreground font-sans">
       {/* Navigation */}
