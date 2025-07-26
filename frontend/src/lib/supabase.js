@@ -14,7 +14,11 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!supabaseAnonKey)
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    redirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://hiinen.vercel.app'}/dashboard`
+  }
+})
 
 // Auth helpers with enhanced error handling
 export const signUp = async (email, password, fullName, userType) => {
