@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiiNen AI Test</title>
+</head>
+<body>
+    <h1>HiiNen AI Backend Test</h1>
+    
+    <div id="status">✅ AI Backend is working! Test the endpoints below:</div>
+    
+    <button onclick="testHealth()">Test Health</button>
+    <button onclick="testAI()">Test AI Chat</button>
+    <button onclick="testLiveApp()">Test Live App</button>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testHealth() {
+            try {
+                const response = await fetch('https://hiinen-backend.onrender.com/api/health');
+                const data = await response.json();
+                document.getElementById('results').innerHTML = `
+                    <h3>Health Check:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `
+                    <h3>Health Check Error:</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        async function testAI() {
+            try {
+                const response = await fetch('https://hiinen-backend.onrender.com/api/ai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Hello, can you help me test the AI functionality?'
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('results').innerHTML = `
+                    <h3>AI Test Response:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `
+                    <h3>AI Test Error:</h3>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        async function testLiveApp() {
+            window.open('https://hiinen.vercel.app/demo', '_blank');
+        }
+    </script>
+</body>
+</html>
