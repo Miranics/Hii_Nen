@@ -2,7 +2,7 @@
 > *"Se Hii Nen"* - Let's Start (Tiv Language)
 
 **AI-Powered Co-Founder Platform for First-Time Entrepreneurs**
-
+                                                                                                                                 
 HiiNen transforms entrepreneurial dreams into actionable business strategies through advanced AI guidance, comprehensive mentorship, and intelligent business development tools.
 
 ---
