@@ -18,7 +18,7 @@ const nextConfig = {
                   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                   "font-src 'self' https://fonts.gstatic.com",
                   "img-src 'self' data: https:",
-                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co ws://localhost:* http://localhost:*",
+                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co ws://localhost:* http://localhost:* https://*.onrender.com",
                   "frame-src 'none'",
                   "object-src 'none'",
                   "base-uri 'self'"
@@ -29,7 +29,7 @@ const nextConfig = {
                   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                   "font-src 'self' https://fonts.gstatic.com",
                   "img-src 'self' data: https:",
-                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.railway.app https://*.onrender.com",
+                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.onrender.com https://hiinen-backend.onrender.com",
                   "frame-src 'none'",
                   "object-src 'none'",
                   "base-uri 'self'"
