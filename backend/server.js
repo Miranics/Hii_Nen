@@ -32,27 +32,41 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS configuration
+// CORS configuration - Updated for production
 const allowedOrigins = [
   'http://localhost:3000',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
   'https://hiinen.vercel.app',
   'https://hiinen-93h32vvgk-miranics-s-projects.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
+
+// Also allow any vercel app deployment
+const isVercelDomain = (origin) => {
+  return origin && (
+    origin.endsWith('.vercel.app') || 
+    origin.includes('hiinen') || 
+    origin === 'https://hiinen.vercel.app'
+  );
+};
 
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin) || isVercelDomain(origin)) {
+      console.log('✅ CORS allowed origin:', origin);
       return callback(null, true);
     }
     
     console.log('🚫 CORS blocked origin:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Body parser middleware
