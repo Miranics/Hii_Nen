@@ -18,6 +18,9 @@ initializeDatabase();
 
 const app = express();
 
+// Trust proxy for deployment on Render/Railway/etc
+app.set('trust proxy', true);
+
 // Security middleware
 app.use(helmet());
 
