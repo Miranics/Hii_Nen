@@ -4,13 +4,7 @@ import { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
-impor            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fadeInUp stagger-delay-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Idea className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Idea Validation Score</h3>
-              </div>callHiiNenAI, API_CONFIG } from "../../lib/api";
+import { callHiiNenAI, API_CONFIG } from "../../lib/api";
 import { Idea, Target } from "../../components/icons/ProfessionalIcons";
 
 export default function DemoPage() {
