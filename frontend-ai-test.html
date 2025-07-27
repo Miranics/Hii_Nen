@@ -42,14 +42,14 @@
                 // Test if we can reach the frontend demo page
                 const response = await fetch(`${FRONTEND_URL}/demo`);
                 if (response.ok) {
-                    updateStatus('✅ Frontend is accessible!', 'success');
+                    updateStatus('Frontend is accessible!', 'success');
                     addResult('Frontend Connection', { status: 'accessible', url: FRONTEND_URL }, true);
                 } else {
-                    updateStatus('❌ Frontend not accessible', 'error');
+                    updateStatus('Frontend not accessible', 'error');
                     addResult('Frontend Connection', { error: `HTTP ${response.status}` }, false);
                 }
             } catch (error) {
-                updateStatus('❌ Cannot reach frontend', 'error');
+                updateStatus('Cannot reach frontend', 'error');
                 addResult('Frontend Connection', { error: error.message }, false);
             }
         }
@@ -74,16 +74,16 @@
                 const data = await response.json();
                 
                 if (response.ok && data.success) {
-                    updateStatus('✅ AI chat is working!', 'success');
+                    updateStatus('AI chat is working!', 'success');
                     addResult('AI Chat Test', data, true);
                     addChatMessage('Test User', 'Hello HiiNen! This is a direct test from the browser.');
                     addChatMessage('HiiNen AI', data.response);
                 } else {
-                    updateStatus('❌ AI chat failed', 'error');
+                    updateStatus('AI chat failed', 'error');
                     addResult('AI Chat Test', data, false);
                 }
             } catch (error) {
-                updateStatus('❌ AI chat connection failed', 'error');
+                updateStatus('AI chat connection failed', 'error');
                 addResult('AI Chat Test', { error: error.message }, false);
             }
         }
