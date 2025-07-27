@@ -4,7 +4,14 @@ import { useState } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
-import { callHiiNenAI, API_CONFIG } from "../../lib/api";
+impor            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fadeInUp stagger-delay-5">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <Idea className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Idea Validation Score</h3>
+              </div>callHiiNenAI, API_CONFIG } from "../../lib/api";
+import { Idea, Target } from "../../components/icons/ProfessionalIcons";
 
 export default function DemoPage() {
   const [messages, setMessages] = useState([
@@ -206,9 +213,14 @@ export default function DemoPage() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 animate-fadeInUp stagger-delay-4">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                🎯 Next Steps
-              </h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <Target className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Next Steps
+                </h3>
+              </div>
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">

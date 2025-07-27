@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import { Rocket, Idea, Analytics, Growth, Target } from "../../components/icons/ProfessionalIcons";
 
 export default function AboutPageEnhanced() {
   return (
@@ -19,8 +20,8 @@ export default function AboutPageEnhanced() {
             </Link>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900 dark:text-white animate-fadeInUp">
-            <span className="text-2xl mr-2">🎯</span>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-6 text-gray-900 dark:text-white animate-fadeInUp flex items-center justify-center gap-3">
+            <Target className="w-10 h-10 text-purple-600" />
             About HiiNen
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto animate-fadeInUp stagger-delay-1">
@@ -81,7 +82,7 @@ export default function AboutPageEnhanced() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg animate-fadeInUp stagger-delay-4">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🎯</span>
+                  <Target className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Our Mission</h2>
               </div>
@@ -137,7 +138,7 @@ export default function AboutPageEnhanced() {
 
             <div className="text-center animate-fadeInUp stagger-delay-9">
               <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">💡</span>
+                <Idea className="w-10 h-10 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Accessibility</h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -147,7 +148,7 @@ export default function AboutPageEnhanced() {
 
             <div className="text-center animate-fadeInUp stagger-delay-10">
               <div className="w-20 h-20 bg-orange-100 dark:bg-orange-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🌍</span>
+                <Growth className="w-10 h-10 text-orange-600 dark:text-orange-400" />
               </div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Impact</h3>
               <p className="text-gray-600 dark:text-gray-400">

@@ -2,9 +2,28 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Rocket, Funding, Growth } from '../../../components/icons/ProfessionalIcons';
 
 export default function LearningHub() {
   const [activeSection, setActiveSection] = useState('courses');
+
+  const renderAchievementIcon = (iconType) => {
+    const iconProps = {
+      className: "w-12 h-12",
+      color: "currentColor"
+    };
+
+    switch (iconType) {
+      case 'rocket':
+        return <Rocket {...iconProps} />;
+      case 'funding':
+        return <Funding {...iconProps} />;
+      case 'growth':
+        return <Growth {...iconProps} />;
+      default:
+        return <span className="text-6xl">{iconType}</span>;
+    }
+  };
 
   const learningStats = {
     coursesCompleted: '12',
@@ -142,9 +161,9 @@ export default function LearningHub() {
     { title: 'First Course Completed', icon: '🎓', unlocked: true },
     { title: 'Week Streak Champion', icon: '🔥', unlocked: true },
     { title: 'Knowledge Seeker', icon: '📚', unlocked: true },
-    { title: 'MVP Builder', icon: '🚀', unlocked: false },
-    { title: 'Funding Expert', icon: '💰', unlocked: false },
-    { title: 'Marketing Guru', icon: '📈', unlocked: false }
+    { title: 'MVP Builder', icon: 'rocket', unlocked: false },
+    { title: 'Funding Expert', icon: 'funding', unlocked: false },
+    { title: 'Marketing Guru', icon: 'growth', unlocked: false }
   ];
 
   return (
@@ -479,8 +498,8 @@ export default function LearningHub() {
                       : 'bg-white/30 dark:bg-gray-800/30 border-white/20 dark:border-gray-700/20 opacity-60'
                   }`}>
                     <div className="text-center">
-                      <div className={`text-6xl mb-4 ${achievement.unlocked ? '' : 'grayscale'}`}>
-                        {achievement.icon}
+                      <div className={`text-6xl mb-4 flex justify-center ${achievement.unlocked ? '' : 'grayscale'}`}>
+                        {renderAchievementIcon(achievement.icon)}
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                         {achievement.title}

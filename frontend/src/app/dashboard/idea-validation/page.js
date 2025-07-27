@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { callHiiNenAI, API_CONFIG } from '../../../lib/api';
+import { Idea, Target, Rocket } from '../../../components/icons/ProfessionalIcons';
 
 export default function IdeaValidationPage() {
   const [idea, setIdea] = useState('');
@@ -92,9 +93,14 @@ export default function IdeaValidationPage() {
               >
                 ← Back to Dashboard
               </Link>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                💡 Idea Validation
-              </h1>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <Idea className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Idea Validation
+                </h1>
+              </div>
             </div>
           </div>
         </div>
@@ -176,7 +182,10 @@ export default function IdeaValidationPage() {
                     Analyzing your idea...
                   </div>
                 ) : (
-                  '🚀 Validate My Idea'
+                  <>
+                    <Rocket className="w-5 h-5 mr-2" />
+                    Validate My Idea
+                  </>
                 )}
               </button>
             </form>
@@ -248,8 +257,9 @@ export default function IdeaValidationPage() {
 
                 {/* Recommendations */}
                 <div>
-                  <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-3 flex items-center">
-                    💡 Next Steps
+                  <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Next Steps
                   </h3>
                   <ul className="space-y-2">
                     {results.recommendations.map((rec, index) => (

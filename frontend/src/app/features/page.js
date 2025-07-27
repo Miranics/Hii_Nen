@@ -1,6 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import { 
+  Idea, 
+  Validation, 
+  Mentorship, 
+  Business, 
+  Funding, 
+  Analytics, 
+  Networking, 
+  Learning,
+  Launch,
+  Growth 
+} from "../../components/icons/ProfessionalIcons";
 
 export default function FeaturesPage() {
   return (
@@ -35,7 +47,7 @@ export default function FeaturesPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 animate-fadeInUp stagger-delay-2">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Image src="/idea.svg" alt="Idea Generation" width={32} height={32} className="brightness-0 invert" />
+                  <Idea className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AI-Powered Ideation</h2>
               </div>
@@ -63,7 +75,7 @@ export default function FeaturesPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 animate-fadeInUp stagger-delay-3">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-                  <Image src="/validate.svg" alt="Validation" width={32} height={32} className="brightness-0 invert" />
+                  <Validation className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Smart Validation</h2>
               </div>
@@ -91,7 +103,7 @@ export default function FeaturesPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 animate-fadeInUp stagger-delay-4">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                  <Image src="/mentor.svg" alt="Mentorship" width={32} height={32} className="brightness-0 invert" />
+                  <Mentorship className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Expert Mentorship</h2>
               </div>
@@ -119,7 +131,7 @@ export default function FeaturesPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 animate-fadeInUp stagger-delay-5">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                  <Image src="/funding.svg" alt="Funding" width={32} height={32} className="brightness-0 invert" />
+                  <Funding className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Funding Roadmap</h2>
               </div>
@@ -147,7 +159,7 @@ export default function FeaturesPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg hover:shadow-xl transition-all transform hover:scale-105 animate-fadeInUp stagger-delay-6">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-green-500 rounded-lg flex items-center justify-center">
-                  <Image src="/analytics.svg" alt="Analytics" width={32} height={32} className="brightness-0 invert" />
+                  <Analytics className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Smart Analytics</h2>
               </div>
