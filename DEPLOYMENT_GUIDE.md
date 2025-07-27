@@ -1,10 +1,10 @@
 # HiiNen Deployment Guide
 
-## 🚀 Quick Deployment Steps
+##  Quick Deployment Steps
 
 ### Prerequisites
 1. Sign up for [Vercel](https://vercel.com) with GitHub
-2. Sign up for [Railway](https://railway.app) with GitHub
+2. Sign up for [Render](https://render.app) with GitHub
 3. Have your Supabase and GitHub tokens ready
 
 ---
@@ -27,7 +27,7 @@ NEXT_PUBLIC_API_URL = your_railway_backend_url
 
 ---
 
-## 🛠️ Backend Deployment (Railway)
+## Backend Deployment (Railway)
 
 ### Step 1: Deploy to Railway
 1. Go to [railway.app/new](https://railway.app/new)
@@ -71,7 +71,7 @@ Test these URLs:
 
 ---
 
-## 🎯 Post-Deployment
+## Post-Deployment
 
 1. **Custom Domains** (Optional): Add your own domain in both platforms
 2. **Analytics**: Enable Vercel Analytics for insights
