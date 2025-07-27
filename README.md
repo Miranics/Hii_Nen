@@ -25,7 +25,7 @@ HiiNen is a production-ready, full-stack platform that serves as an AI co-founde
 - Funding Opportunities & Investor Connections
 - Professional Networking & Mentorship
 - Learning Hub with Curated Resources
-- Account Management & Preferences
+- Account Management & Preferences                
 
 **Enterprise-Grade Architecture**
 - Secure authentication and user management
