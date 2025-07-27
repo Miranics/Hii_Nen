@@ -1,5 +1,6 @@
 'use client';
 
+// Force deployment - 2025-07-27 - Backend CORS and rate limiter fixed
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from 'react';
