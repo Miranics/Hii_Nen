@@ -4,7 +4,7 @@
 
 ### Prerequisites
 1. Sign up for [Vercel](https://vercel.com) with GitHub
-2. Sign up for [Render](https://render.app) with GitHub
+2. Sign up for [Render](https://render.com) with GitHub
 3. Have your Supabase and GitHub tokens ready
 
 ---
