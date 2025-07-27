@@ -4,6 +4,10 @@ const nextConfig = {
     // Disable ESLint during builds for now
     ignoreDuringBuilds: true,
   },
+  // Force deployment refresh - CSP update for Render backend
+  experimental: {
+    forceSwcTransforms: true,
+  },
   async headers() {
     return [
       {
