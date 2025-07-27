@@ -24,11 +24,24 @@ app.set('trust proxy', true);
 // Security middleware
 app.use(helmet());
 
-// Rate limiting
+// Rate limiting - Configured for proxy environments like Render
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  message: 'Too many requests from this IP, please try again later.',
+  // Configure for proxy environments
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  // Use a more secure key generator that works with proxies
+  keyGenerator: (req) => {
+    // For Render, use the rightmost IP from X-Forwarded-For
+    const forwarded = req.headers['x-forwarded-for'];
+    if (forwarded) {
+      const ips = forwarded.split(',').map(ip => ip.trim());
+      return ips[ips.length - 1]; // Use the rightmost (original client) IP
+    }
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  }
 });
 app.use('/api/', limiter);
 
