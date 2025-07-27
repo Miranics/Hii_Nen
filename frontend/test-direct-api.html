@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct API Test - HiiNen</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Direct Backend API Test</h1>
+    <p>Testing connection to: <span id="api-url">https://hiinen-backend.onrender.com</span></p>
+    
+    <button onclick="testHealth()">Test Health Endpoint</button>
+    <button onclick="testAI()">Test AI Endpoint</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'https://hiinen-backend.onrender.com';
+        
+        function log(message) {
+            document.getElementById('results').innerHTML += '<p>' + message + '</p>';
+        }
+        
+        async function testHealth() {
+            log('Testing health endpoint...');
+            try {
+                const response = await fetch(API_BASE + '/api/health');
+                const data = await response.json();
+                log('✅ Health: ' + JSON.stringify(data));
+            } catch (error) {
+                log('❌ Health error: ' + error.message);
+            }
+        }
+        
+        async function testAI() {
+            log('Testing AI endpoint...');
+            try {
+                const response = await fetch(API_BASE + '/api/ai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: 'Hello, test message',
+                        context: 'Testing connection'
+                    })
+                });
+                const data = await response.json();
+                log('✅ AI Response: ' + JSON.stringify(data));
+            } catch (error) {
+                log('❌ AI error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

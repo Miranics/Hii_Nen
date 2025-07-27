@@ -1,6 +1,8 @@
 // Configuration for API endpoints - Updated for production
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+  BASE_URL: process.env.NODE_ENV === 'production' 
+    ? 'https://hiinen-backend.onrender.com'
+    : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'),
   ENDPOINTS: {
     AI_CHAT: '/api/ai/chat',
     AI_INSIGHTS: '/api/ai/insights',
