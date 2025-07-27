@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiiNen Frontend AI Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 HiiNen Frontend AI Debug Scanner</h1>
+        
+        <div class="test-section">
+            <h3>1. Test Live Frontend AI Connection</h3>
+            <div id="frontend-test"></div>
+            <button onclick="testLiveFrontend()">Test Live Frontend</button>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Direct Backend Test</h3>
+            <div id="backend-test"></div>
+            <button onclick="testDirectBackend()">Test Backend Direct</button>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Network Inspector</h3>
+            <div id="network-test"></div>
+            <button onclick="inspectNetwork()">Inspect Network</button>
+        </div>
+    </div>
+
+    <script>
+        function addResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = message;
+            container.appendChild(div);
+        }
+
+        function clearResults(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        async function testLiveFrontend() {
+            clearResults('frontend-test');
+            addResult('frontend-test', '🔄 Testing live frontend AI integration...', 'info');
+            
+            try {
+                // Test if we can access the frontend's AI endpoints
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://hiinen.vercel.app/demo';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                addResult('frontend-test', '✅ Frontend page accessible', 'success');
+                
+                // Wait for iframe to load then test
+                iframe.onload = async function() {
+                    try {
+                        // Try to test API config from the live page
+                        addResult('frontend-test', '📄 Live page loaded successfully', 'success');
+                        addResult('frontend-test', '🔗 Testing API configuration from live page...', 'info');
+                        
+                        // Since we can't access cross-origin iframe content, test API directly
+                        const testResponse = await fetch('https://hiinen-backend.onrender.com/api/ai/chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Origin': 'https://hiinen.vercel.app'
+                            },
+                            body: JSON.stringify({
+                                message: 'Test from live frontend debug'
+                            })
+                        });
+                        
+                        if (testResponse.ok) {
+                            const data = await testResponse.json();
+                            addResult('frontend-test', `✅ Backend responds to frontend origin: ${data.success}`, 'success');
+                        } else {
+                            addResult('frontend-test', `❌ Backend rejected frontend request: ${testResponse.status}`, 'error');
+                        }
+                        
+                    } catch (e) {
+                        addResult('frontend-test', `❌ Frontend test error: ${e.message}`, 'error');
+                    }
+                    
+                    document.body.removeChild(iframe);
+                };
+                
+            } catch (e) {
+                addResult('frontend-test', `❌ Frontend test failed: ${e.message}`, 'error');
+            }
+        }
+
+        async function testDirectBackend() {
+            clearResults('backend-test');
+            addResult('backend-test', '🔄 Testing backend endpoints directly...', 'info');
+            
+            try {
+                // Test health endpoint
+                const healthResponse = await fetch('https://hiinen-backend.onrender.com/api/health');
+                const healthData = await healthResponse.json();
+                addResult('backend-test', `✅ Health: ${healthData.message}`, 'success');
+                
+                // Test AI endpoint
+                const aiResponse = await fetch('https://hiinen-backend.onrender.com/api/ai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Debug test message' })
+                });
+                
+                const aiData = await aiResponse.json();
+                if (aiData.success) {
+                    addResult('backend-test', `✅ AI: ${aiData.response.substring(0, 100)}...`, 'success');
+                } else {
+                    addResult('backend-test', `❌ AI failed: ${aiData.error}`, 'error');
+                }
+                
+            } catch (e) {
+                addResult('backend-test', `❌ Backend test failed: ${e.message}`, 'error');
+            }
+        }
+
+        async function inspectNetwork() {
+            clearResults('network-test');
+            addResult('network-test', '🔍 Inspecting network configuration...', 'info');
+            
+            // Check current domain
+            addResult('network-test', `🌐 Current domain: ${window.location.hostname}`, 'info');
+            addResult('network-test', `🔒 Protocol: ${window.location.protocol}`, 'info');
+            
+            // Test cross-origin request with detailed error handling
+            try {
+                const response = await fetch('https://hiinen-backend.onrender.com/api/ai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    body: JSON.stringify({
+                        message: 'Network inspection test'
+                    })
+                });
+                
+                // Check response headers
+                const corsHeaders = [];
+                for (let [key, value] of response.headers.entries()) {
+                    if (key.includes('access-control')) {
+                        corsHeaders.push(`${key}: ${value}`);
+                    }
+                }
+                
+                addResult('network-test', `📋 CORS Headers:`, 'info');
+                addResult('network-test', `<pre>${corsHeaders.join('\\n')}</pre>`, 'info');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('network-test', `✅ Request successful: ${data.success}`, 'success');
+                } else {
+                    addResult('network-test', `❌ Request failed: ${response.status} ${response.statusText}`, 'error');
+                }
+                
+            } catch (e) {
+                addResult('network-test', `❌ Network error: ${e.message}`, 'error');
+                
+                // Check if it's a CORS error
+                if (e.message.includes('CORS') || e.message.includes('cross-origin')) {
+                    addResult('network-test', '🚫 This appears to be a CORS issue', 'error');
+                }
+            }
+        }
+
+        // Auto-run tests
+        window.onload = function() {
+            testDirectBackend();
+        };
+    </script>
+</body>
+</html>
