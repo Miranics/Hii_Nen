@@ -301,3 +301,5 @@ For support, feature requests, or business inquiries, please open an issue on Gi
 
 *HiiNen - Empowering entrepreneurs with AI-driven business intelligence and personalized startup guidance.*
 
+#   F o r c e   d e p l o y m e n t   t r i g g e r  
+ 
