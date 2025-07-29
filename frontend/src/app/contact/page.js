@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
+import { Business, Rocket } from "../../components/icons/ProfessionalIcons";
 
 export default function ContactPage() {
   return (
@@ -161,7 +162,9 @@ export default function ContactPage() {
                   <span className="font-medium text-gray-900 dark:text-white">Twitter</span>
                 </a>
                 <a href="#" className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group">
-                  <span className="text-2xl group-hover:scale-110 transition-transform">💼</span>
+                  <div className="w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Business className="w-6 h-6 text-blue-600" />
+                  </div>
                   <span className="font-medium text-gray-900 dark:text-white">LinkedIn</span>
                 </a>
                 <a href="#" className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group">
@@ -184,7 +187,9 @@ export default function ContactPage() {
                   href="/demo"
                   className="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all group"
                 >
-                  <span className="text-2xl group-hover:scale-110 transition-transform">🚀</span>
+                  <div className="w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Rocket className="w-6 h-6 text-blue-600" />
+                  </div>
                   <div>
                     <span className="font-medium text-gray-900 dark:text-white block">Try Demo</span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">Experience HiiNen in action</span>

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { callHiiNenAI, API_CONFIG } from "../../lib/api";
-import { Idea, Target } from "../../components/icons/ProfessionalIcons";
+import { Idea, Target, Rocket, Funding } from "../../components/icons/ProfessionalIcons";
 
 export default function DemoPage() {
   const [messages, setMessages] = useState([
@@ -200,8 +200,9 @@ export default function DemoPage() {
                 </div>
               </div>
               <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <p className="text-sm text-green-800 dark:text-green-200 font-semibold">
-                  Overall Score: 80% - Strong potential! 🚀
+                <p className="text-sm text-green-800 dark:text-green-200 font-semibold flex items-center gap-2">
+                  Overall Score: 80% - Strong potential! 
+                  <Rocket className="w-4 h-4" />
                 </p>
               </div>
             </div>
@@ -263,7 +264,7 @@ export default function DemoPage() {
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center animate-fadeInUp stagger-delay-7">
             <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">💰</span>
+              <Funding className="w-6 h-6 text-purple-600" />
             </div>
             <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Funding Guidance</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">

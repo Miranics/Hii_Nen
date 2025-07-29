@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { useState } from "react";
+import { Rocket, Funding } from "../../components/icons/ProfessionalIcons";
 
 export default function FAQPage() {
   const [openFAQ, setOpenFAQ] = useState(null);
@@ -141,7 +142,9 @@ export default function FAQPage() {
         <div className="max-w-4xl mx-auto mt-16">
           <div className="grid gap-6 md:grid-cols-3">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg text-center animate-fadeInUp" style={{ animationDelay: '1.3s' }}>
-              <div className="text-3xl mb-3">🚀</div>
+              <div className="flex justify-center mb-3">
+                <Rocket className="w-8 h-8 text-blue-600" />
+              </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">1000+</div>
               <div className="text-gray-600 dark:text-gray-400">Startups Launched</div>
             </div>
@@ -151,7 +154,9 @@ export default function FAQPage() {
               <div className="text-gray-600 dark:text-gray-400">Expert Mentors</div>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg text-center animate-fadeInUp" style={{ animationDelay: '1.5s' }}>
-              <div className="text-3xl mb-3">💰</div>
+              <div className="flex justify-center mb-3">
+                <Funding className="w-8 h-8 text-green-600" />
+              </div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">$50M+</div>
               <div className="text-gray-600 dark:text-gray-400">Funding Raised</div>
             </div>

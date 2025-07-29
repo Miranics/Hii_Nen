@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
-import { Rocket, Idea, Analytics, Growth, Target } from "../../components/icons/ProfessionalIcons";
+import { Rocket, Idea, Analytics, Growth, Target, Networking, Star } from "../../components/icons/ProfessionalIcons";
 
 export default function AboutPageEnhanced() {
   return (
@@ -52,22 +52,30 @@ export default function AboutPageEnhanced() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg animate-fadeInUp stagger-delay-3">
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="text-center">
-                  <div className="text-3xl mb-2">🚀</div>
+                  <div className="flex justify-center mb-2">
+                    <Rocket className="w-8 h-8 text-blue-600" />
+                  </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">1000+</div>
                   <div className="text-gray-600 dark:text-gray-400">Ideas Validated</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl mb-2">👥</div>
+                  <div className="flex justify-center mb-2">
+                    <Networking className="w-8 h-8 text-purple-600" />
+                  </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">500+</div>
                   <div className="text-gray-600 dark:text-gray-400">Entrepreneurs</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl mb-2">🌍</div>
+                  <div className="flex justify-center mb-2">
+                    <Growth className="w-8 h-8 text-green-600" />
+                  </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">20+</div>
                   <div className="text-gray-600 dark:text-gray-400">Countries</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl mb-2">💰</div>
+                  <div className="flex justify-center mb-2">
+                    <Analytics className="w-8 h-8 text-orange-600" />
+                  </div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">$10M+</div>
                   <div className="text-gray-600 dark:text-gray-400">Funding Raised</div>
                 </div>
@@ -96,7 +104,7 @@ export default function AboutPageEnhanced() {
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg animate-fadeInUp stagger-delay-5">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🌟</span>
+                  <Star className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Our Vision</h2>
               </div>
@@ -118,7 +126,7 @@ export default function AboutPageEnhanced() {
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div className="text-center animate-fadeInUp stagger-delay-7">
               <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🤝</span>
+                <Networking className="w-10 h-10 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">Community</h3>
               <p className="text-gray-600 dark:text-gray-400">
