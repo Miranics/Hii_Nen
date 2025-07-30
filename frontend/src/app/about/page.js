@@ -54,18 +54,21 @@ export default function AboutPage() {
                       </div>
                     </div>
                     
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                      Young Visionary Developer
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Nanen Miracle Mbanaade
                     </h2>
-                    <p className="text-blue-600 dark:text-blue-400 font-medium mb-4">
+                    <p className="text-blue-600 dark:text-blue-400 font-medium mb-4 text-lg">
                       Founder & Lead Developer
                     </p>
                     
-                    <div className="flex gap-2 mb-4">
-                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+                    <div className="flex flex-wrap gap-2 mb-4 justify-center">
+                      <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-sm font-medium shadow-lg">
+                        AI/ML Engineer
+                      </span>
+                      <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full text-sm font-medium shadow-lg">
                         Full-Stack Developer
                       </span>
-                      <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-200 rounded-full text-sm font-medium">
+                      <span className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full text-sm font-medium shadow-lg">
                         Entrepreneur
                       </span>
                     </div>
