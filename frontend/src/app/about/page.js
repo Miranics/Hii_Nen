@@ -43,7 +43,7 @@ export default function AboutPage() {
                     <div className="relative mb-6">
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-lg opacity-30"></div>
                       <Image
-                        src="/founder-photo.jpg"
+                        src="/founder-photo-new.jpg"
                         alt="Founder and Developer"
                         width={200}
                         height={200}
