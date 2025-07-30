@@ -1,11 +1,11 @@
 <div align="center">
 
-# HiiNen `<RocketIcon>`
+# HiiNen
 ### *"Se Hii Nen"* - Let's Start (Tiv Language)
 
 <img src="frontend/public/hiinen-logo.svg" alt="HiiNen Logo" width="120" height="120">
 
-**AI-Powered Co-Founder Platform for Next-Generation Entrepreneurs** `<IdeaIcon>`
+**AI-Powered Co-Founder Platform for Next-Generation Entrepreneurs**
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-hiinen.vercel.app-blue?style=for-the-badge)](https://hiinen.vercel.app)
 [![Backend API](https://img.shields.io/badge/API-hiinen--backend.onrender.com-green?style=for-the-badge)](https://hiinen-backend.onrender.com)
@@ -17,22 +17,22 @@
 
 ---
 
-## Platform Overview `<StarIcon>`
+## Platform Overview
 
 HiiNen is a **production-ready, full-stack AI co-founder platform** that empowers aspiring entrepreneurs worldwide. Built with cutting-edge web technologies and powered by **GitHub Models GPT-4**, it provides personalized business guidance, market analysis, and step-by-step startup development support.
 
-### Core Mission `<TargetIcon>`
+### Core Mission
 Democratize entrepreneurship by providing every aspiring founder with access to AI-powered guidance, expert mentorship, and the tools needed to transform ideas into successful, impactful businesses.
 
 ---
 
-## Key Features `<LaunchIcon>`
+## Key Features
 
 <table>
 <tr>
 <td>
 
-### AI Co-Founder Intelligence `<IdeaIcon>`
+### AI Co-Founder Intelligence
 - **Real-time AI Business Conversations**
 - **Personalized Startup Recommendations**
 - **Dynamic Business Plan Generation**
@@ -42,7 +42,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 </td>
 <td>
 
-### Comprehensive Dashboard Ecosystem `<AnalyticsIcon>`
+### Comprehensive Dashboard Ecosystem
 - **Analytics & Performance Tracking** 
 - **Market Research & Competitive Analysis** 
 - **Business Planning & Strategy Development**
@@ -54,15 +54,15 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 </tr>
 </table>
 
-### Enterprise-Grade Architecture `<ValidationIcon>`
-- **Secure Authentication & User Management** `<ValidationIcon>`
-- **Real-time AI Interactions with Conversation History** `<MentorshipIcon>`
-- **Responsive Design Optimized for All Devices** `<StarIcon>`
-- **Production-Ready Security & Performance** `<ValidationIcon>`
-- **Vercel Analytics Integration** `<AnalyticsIcon>`
-- **Professional UI/UX with Custom Icon System** `<StarIcon>`---
+### Enterprise-Grade Architecture
+- **Secure Authentication & User Management**
+- **Real-time AI Interactions with Conversation History**
+- **Responsive Design Optimized for All Devices**
+- **Production-Ready Security & Performance**
+- **Vercel Analytics Integration**
+- **Professional UI/UX with Custom Icon System**---
 
-## Technology Stack `<SettingsIcon>`
+## Technology Stack
 
 <div align="center">
 
@@ -72,7 +72,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![TypeScript](https://img.shields.io/badge/Turbopack-Latest-FF4088?style=for-the-badge)
 
-### **Backend Technologies**
+### **Backend Technologies**   
 ![Node.js](https://img.shields.io/badge/Node.js-Latest-339933?style=for-the-badge&logo=node.js)
 ![Express](https://img.shields.io/badge/Express.js-Latest-000000?style=for-the-badge&logo=express)
 ![Supabase](https://img.shields.io/badge/Supabase-Latest-3ECF8E?style=for-the-badge&logo=supabase)
@@ -87,17 +87,16 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 
 ---
 
-## Project Architecture `<BusinessIcon>`
+## Project Architecture
 
-<details>
-<summary><strong>Detailed Project Structure `<SettingsIcon>`</strong></summary>
+**Detailed Project Structure**
 
 ```
 HiiNen/
 ├── frontend/                     # Next.js Application
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── dashboard/        # 8 AI-Enhanced Modules `<AnalyticsIcon>`
+│   │   │   ├── dashboard/        # 8 AI-Enhanced Modules
 │   │   │   │   ├── analytics/       # Performance Tracking
 │   │   │   │   ├── business-planning/ # Strategic Development
 │   │   │   │   ├── funding/         # Investment Opportunities
@@ -107,11 +106,11 @@ HiiNen/
 │   │   │   │   ├── mentorship/      # Expert Connections
 │   │   │   │   ├── networking/      # Professional Network
 │   │   │   │   └── settings/        # Account Management
-│   │   │   ├── (auth)/          # Authentication System `<ValidationIcon>`
+│   │   │   ├── (auth)/          # Authentication System
 │   │   │   │   ├── login/           # User Login
 │   │   │   │   ├── signup/          # User Registration
 │   │   │   │   └── forgot-password/ # Password Recovery
-│   │   │   ├── (pages)/         # Marketing Pages `<StarIcon>`
+│   │   │   ├── (pages)/         # Marketing Pages
 │   │   │   │   ├── about/           # About Page with Founder Info
 │   │   │   │   ├── contact/         # Contact Information
 │   │   │   │   ├── demo/            # Platform Demo
@@ -125,7 +124,7 @@ HiiNen/
 │   │   │   ├── Navbar.js            # Navigation Component
 │   │   │   ├── BackendStatus.js     # System Health Monitoring
 │   │   │   └── icons/
-│   │   │       └── ProfessionalIcons.js # Custom SVG Icon Library `<StarIcon>`
+│   │   │       └── ProfessionalIcons.js # Custom SVG Icon Library
 │   │   └── lib/
 │   │       ├── api.js               # Centralized API Layer
 │   │       └── supabase.js          # Database Configuration
@@ -137,7 +136,7 @@ HiiNen/
 │   ├── next.config.mjs              # Security & Build Settings
 │   ├── tailwind.config.mjs          # Styling Configuration
 │   └── package.json                 # Dependencies & Scripts
-├── backend/                      # Express.js API Server `<SettingsIcon>`
+├── backend/                      # Express.js API Server
 │   ├── routes/
 │   │   ├── ai.js                    # AI Endpoint Handlers
 │   │   ├── auth.js                  # Authentication Routes
@@ -160,13 +159,11 @@ HiiNen/
     └── UI_UX_IMPROVEMENTS.md        # Design Documentation
 ```
 
-</details>
-
 ---
 
-## Quick Start Guide `<LaunchIcon>`
+## Quick Start Guide
 
-### Prerequisites `<BusinessIcon>`
+### Prerequisites
 
 ```bash
 Node.js 18+ and npm
@@ -175,10 +172,9 @@ Supabase account (database)
 GitHub account (AI Models API access)
 ```
 
-### Local Development Setup `<SettingsIcon>`
+### Local Development Setup
 
-<details>
-<summary><strong>Step-by-Step Installation `<SettingsIcon>`</strong></summary>
+**Step-by-Step Installation**
 
 **1. Clone and Install Dependencies**
 ```bash
@@ -235,15 +231,13 @@ npm run dev
 - **Backend API:** `http://localhost:5000`
 - **Health Check:** `http://localhost:5000/api/health`
 
-</details>
-
 ---
 
-## Production Deployment `<LaunchIcon>`
+## Production Deployment
 
 <div align="center">
 
-### **Live Production Environment `<LaunchIcon>`**
+### **Live Production Environment**
 
 | Service | Status | URL | Description |
 |---------|--------|-----|-------------|
@@ -254,10 +248,9 @@ npm run dev
 
 </div>
 
-### Deployment Process `<SettingsIcon>`
+### Deployment Process
 
-<details>
-<summary><strong>Automated Deployment Pipeline `<BusinessIcon>`</strong></summary>
+**Automated Deployment Pipeline**
 
 **Vercel (Frontend)**
 - ✅ **Automatic deployment** via GitHub integration
@@ -275,16 +268,13 @@ npm run dev
 - ✅ **Health monitoring** and automatic restarts
 - ✅ **SSL certificates** automatically managed
 
-</details>
-
 ---
 
-## API Documentation `<SettingsIcon>`
+## API Documentation
 
-<details>
-<summary><strong>Complete API Reference `<BusinessIcon>`</strong></summary>
+**Complete API Reference**
 
-### **AI Interactions `<IdeaIcon>`**
+### **AI Interactions**
 ```http
 POST /api/ai/chat
 Content-Type: application/json
@@ -295,7 +285,7 @@ Content-Type: application/json
 }
 ```
 
-### **Authentication `<ValidationIcon>`**
+### **Authentication**
 ```http
 POST /api/auth/signup
 POST /api/auth/login  
@@ -309,7 +299,7 @@ PUT    /api/users/profile
 DELETE /api/users/account
 ```
 
-### **System Monitoring `<AnalyticsIcon>`**
+### **System Monitoring**
 ```http
 GET /api/health
 ```
@@ -331,17 +321,15 @@ GET /api/health
 }
 ```
 
-</details>
-
 ---
 
-## Security & Performance `<ValidationIcon>`
+## Security & Performance
 
 <table>
 <tr>
 <td>
 
-### Security Measures `<ValidationIcon>`
+### Security Measures
 - Content Security Policy (CSP)
 - CORS Protection
 - Rate Limiting on API Endpoints
@@ -353,7 +341,7 @@ GET /api/health
 </td>
 <td>
 
-### Performance Optimization `<GrowthIcon>`
+### Performance Optimization
 - Static Site Generation (SSG)
 - Optimized Bundle Sizes (<155KB)
 - Turbopack for Fast Development
@@ -368,11 +356,11 @@ GET /api/health
 
 ---
 
-## Analytics & Insights `<AnalyticsIcon>`
+## Analytics & Insights
 
 <div align="center">
 
-### **Real-Time Platform Metrics `<GrowthIcon>`**
+### **Real-Time Platform Metrics**
 
 | Metric | Current Status |
 |--------|----------------|
@@ -387,35 +375,32 @@ GET /api/health
 
 ---
 
-## Meet the Founder `<StarIcon>`
+## Meet the Founder
 
 <div align="center">
-
-<img src="frontend/public/founder-photo-new.jpg" alt="Nanen Miracle Mbanaade" width="200" height="200" style="border-radius: 50%; border: 4px solid #3B82F6;">
 
 ### **Nanen Miracle Mbanaade**
 *AI/ML Engineer • Full-Stack Developer • Entrepreneur*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](your-linkedin)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/nanen-miracle)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/Miranics)
 [![Email](https://img.shields.io/badge/Email-Contact-red?style=for-the-badge&logo=gmail)](mailto:002nasya@gmail.com)
 
 *"Passionate about leveraging cutting-edge AI technology to democratize entrepreneurship and empower the next generation of African innovators."*
 
-**Expertise:** AI/ML Engineering, Full-Stack Development, Entrepreneurship `<TargetIcon>`  
-**Vision:** Democratizing entrepreneurship through accessible AI technology `<StarIcon>`  
-**Experience:** 5+ Years in Development, 10+ Technologies Mastered `<GrowthIcon>`  
+**Expertise:** AI/ML Engineering, Full-Stack Development, Entrepreneurship  
+**Vision:** Democratizing entrepreneurship through accessible AI technology  
+**Experience:** 5+ Years in Development, 10+ Technologies Mastered  
 
 </div>
 
 ---
 
-## Contributing `<NetworkingIcon>`
+## Contributing
 
-<details>
-<summary><strong>Development Workflow & Guidelines `<SettingsIcon>`</strong></summary>
+**Development Workflow & Guidelines**
 
-### **How to Contribute `<BusinessIcon>`**
+### **How to Contribute**
 1. **Fork** the repository
 2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
 3. **Make** your changes with proper testing
@@ -437,11 +422,9 @@ GET /api/health
 - UI testing for components
 - Performance testing for optimization
 
-</details>
-
 ---
 
-## License & Legal `<ValidationIcon>`
+## License & Legal
 
 <div align="center">
 
@@ -453,11 +436,11 @@ This project is licensed under the **Apache License 2.0** - see the [LICENSE](LI
 
 ---
 
-## Support & Contact `<MentorshipIcon>`
+## Support & Contact
 
 <div align="center">
 
-### **Get Help & Support `<NetworkingIcon>`**
+### **Get Help & Support**
 
 | Contact Type | Information |
 |--------------|-------------|
@@ -478,7 +461,7 @@ This project is licensed under the **Apache License 2.0** - see the [LICENSE](LI
 
 <div align="center">
 
-## Star the Project `<StarIcon>`
+## Star the Project
 
 If HiiNen has helped you or you find it valuable, please consider giving it a star on GitHub!
 
@@ -488,7 +471,7 @@ If HiiNen has helped you or you find it valuable, please consider giving it a st
 
 ---
 
-### **HiiNen - Empowering entrepreneurs with AI-driven business intelligence and personalized startup guidance.** `<RocketIcon>`
+### **HiiNen - Empowering entrepreneurs with AI-driven business intelligence and personalized startup guidance.**
 
 *Built with dedication by [Nanen Miracle Mbanaade](https://github.com/Miranics) - Transforming entrepreneurial dreams into reality through cutting-edge AI technology.*
 
