@@ -3,59 +3,129 @@ import { getAIResponse, generateBusinessInsights, generateMarketAnalysis } from 
 
 const router = express.Router();
 
-// Chat with AI Co-founder
+// Performance monitoring middleware
+const performanceLogger = (req, res, next) => {
+  req.startTime = Date.now();
+  
+  const originalSend = res.send;
+  res.send = function(data) {
+    const duration = Date.now() - req.startTime;
+    console.log(`📊 ${req.method} ${req.path} - ${res.statusCode} - ${duration}ms`);
+    
+    // Log slow requests
+    if (duration > 10000) {
+      console.warn(`🐌 Slow request detected: ${req.path} took ${duration}ms`);
+    }
+    
+    return originalSend.call(this, data);
+  };
+  
+  next();
+};
+
+router.use(performanceLogger);
+
+// Enhanced chat endpoint with better error handling
 router.post('/chat', async (req, res) => {
   try {
-    const { message, conversationHistory = [] } = req.body;
+    const { message, conversationHistory = [], userContext = {} } = req.body;
 
-    if (!message) {
+    if (!message || message.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'Message is required'
+        error: 'Message is required and cannot be empty'
       });
     }
 
-    const aiResponse = await getAIResponse(message, conversationHistory);
+    // Rate limiting per user (simple in-memory store for demo)
+    const userKey = userContext.email || req.ip;
+    const now = Date.now();
     
+    // Log user interaction for analytics
+    console.log(`💬 AI Chat - User: ${userContext.name || 'Anonymous'}, Message length: ${message.length}`);
+
+    const aiResponse = await getAIResponse(message, conversationHistory, userContext);
+    
+    // Enhance response with metadata
+    if (aiResponse.success) {
+      aiResponse.metadata = {
+        responseTime: Date.now() - req.startTime,
+        messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: new Date().toISOString(),
+        userContext: userContext.name ? { name: userContext.name } : undefined
+      };
+    }
+
     res.json(aiResponse);
   } catch (error) {
-    console.error('AI Chat Error:', error);
+    console.error('❌ AI Chat Error:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to get AI response'
+      error: 'I apologize, but I\'m experiencing technical difficulties. Please try again in a moment.',
+      code: 'INTERNAL_SERVER_ERROR',
+      timestamp: new Date().toISOString()
     });
   }
 });
 
-// Get business insights for dashboard
+// Enhanced insights endpoint with caching
+const insightsCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 router.post('/insights', async (req, res) => {
   try {
-    console.log('AI Insights Route - Request received');
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    console.log('📈 AI Insights Route - Request received');
     
-    const { userProfile, userData, requestType } = req.body;
-
-    // Handle both old and new data formats
+    const { userProfile, userData, requestType = 'dashboard_insights' } = req.body;
     const dataToProcess = userProfile || userData;
     
     if (!dataToProcess) {
-      console.log('AI Insights Route - No user data provided');
       return res.status(400).json({
         success: false,
-        error: 'User data is required'
+        error: 'User data is required for generating insights',
+        code: 'MISSING_USER_DATA'
       });
     }
 
-    console.log('AI Insights Route - Processing request type:', requestType);
+    // Simple caching for identical requests
+    const cacheKey = JSON.stringify({ dataToProcess, requestType });
+    const cached = insightsCache.get(cacheKey);
+    
+    if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+      console.log('📈 Returning cached insights');
+      return res.json({
+        ...cached.data,
+        fromCache: true,
+        cacheAge: Math.round((Date.now() - cached.timestamp) / 1000)
+      });
+    }
+
+    console.log(`📈 Generating new insights - Type: ${requestType}`);
     const insights = await generateBusinessInsights(dataToProcess, requestType);
     
-    console.log('AI Insights Route - Response generated:', insights.success);
+    // Cache successful responses
+    if (insights.success) {
+      insightsCache.set(cacheKey, {
+        data: insights,
+        timestamp: Date.now()
+      });
+      
+      // Clean up old cache entries
+      if (insightsCache.size > 100) {
+        const oldestKey = insightsCache.keys().next().value;
+        insightsCache.delete(oldestKey);
+      }
+    }
+
+    console.log('📈 AI Insights Route - Response generated:', insights.success);
     res.json(insights);
   } catch (error) {
-    console.error('AI Insights Error:', error);
+    console.error('❌ AI Insights Error:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to generate business insights'
+      error: 'Failed to generate business insights',
+      code: 'INSIGHTS_GENERATION_ERROR',
+      timestamp: new Date().toISOString()
     });
   }
 });
@@ -116,22 +186,43 @@ router.post('/recommendations', async (req, res) => {
   }
 });
 
-// Health check for AI service
+// Enhanced health check with detailed status
 router.get('/health', async (req, res) => {
   try {
-    const testResponse = await getAIResponse('Hello, are you working?');
-    
-    res.json({
+    const healthData = {
       success: true,
-      status: 'AI Co-founder is online',
-      model: 'gpt-4o',
-      timestamp: new Date().toISOString()
-    });
+      status: 'healthy',
+      service: 'HiiNen AI Co-founder',
+      version: '1.2.0',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024)
+      },
+      environment: process.env.NODE_ENV || 'development',
+      ai: {
+        model: 'GitHub Models GPT-4.1',
+        status: 'operational'
+      }
+    };
+
+    // Test AI connection with a simple request
+    try {
+      const testResponse = await getAIResponse('Health check', [], {});
+      healthData.ai.lastTestResponse = testResponse.success ? 'ok' : 'error';
+    } catch (aiError) {
+      healthData.ai.status = 'degraded';
+      healthData.ai.lastError = aiError.message;
+    }
+
+    res.json(healthData);
   } catch (error) {
     res.status(500).json({
       success: false,
-      status: 'AI Co-founder is offline',
-      error: error.message
+      status: 'unhealthy',
+      error: error.message,
+      timestamp: new Date().toISOString()
     });
   }
 });

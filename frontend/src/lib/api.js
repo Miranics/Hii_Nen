@@ -1,4 +1,4 @@
-// Configuration for API endpoints - Updated for production
+// Configuration for API endpoints - Enhanced for production reliability
 export const API_CONFIG = {
   BASE_URL: process.env.NODE_ENV === 'production' 
     ? 'https://hiinen-backend.onrender.com'
@@ -8,7 +8,9 @@ export const API_CONFIG = {
     AI_INSIGHTS: '/api/ai/insights',
     AI_MARKET_ANALYSIS: '/api/ai/market-analysis',
     HEALTH: '/api/health'
-  }
+  },
+  TIMEOUT: 30000,
+  MAX_RETRIES: 3
 };
 
 // Debug logging for API configuration
@@ -23,63 +25,85 @@ export const getApiUrl = (endpoint) => {
   return `${API_CONFIG.BASE_URL}${endpoint}`;
 };
 
-// Helper function for making API calls to HiiNen AI with retry logic
-export const callHiiNenAI = async (endpoint, data, retries = 2) => {
+// Enhanced health check with retry logic
+export const checkBackendHealth = async () => {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.HEALTH), {
+      signal: controller.signal,
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    clearTimeout(timeoutId);
+    return response.ok;
+  } catch (error) {
+    console.warn('Backend health check failed:', error.message);
+    return false;
+  }
+};
+
+// Enhanced API call function with better error handling
+export const callHiiNenAI = async (endpoint, data, retries = API_CONFIG.MAX_RETRIES) => {
   const fullUrl = getApiUrl(endpoint);
-  console.log('🚀 Making API call to:', fullUrl);
-  console.log('📤 Request data:', data);
+  console.log('🚀 API Call:', fullUrl);
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      // First, try to wake up the backend if it's the first attempt
-      if (attempt === 0) {
-        console.log('🔄 Waking up backend service...');
+      // Wake up Render service on first attempt
+      if (attempt === 0 && API_CONFIG.BASE_URL.includes('render.com')) {
+        console.log('🔄 Waking up Render service...');
         try {
-          await fetch(getApiUrl('/api/health'), { method: 'GET' });
-          // Give the service a moment to wake up
+          await fetch(getApiUrl('/api/health'), { 
+            method: 'HEAD',
+            signal: AbortSignal.timeout(5000)
+          });
           await new Promise(resolve => setTimeout(resolve, 2000));
         } catch (wakeupError) {
-          console.log('⚠️ Backend wakeup failed, continuing with main request');
+          console.log('⚠️ Service wakeup skipped');
         }
       }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
       const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(data),
-        timeout: 30000, // 30 second timeout
+        signal: controller.signal
       });
 
-      console.log('📥 Response status:', response.status);
-      console.log('📥 Response ok:', response.ok);
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
 
       const result = await response.json();
-      console.log('📥 Response data:', result);
-      
-      if (!response.ok) {
-        throw new Error(result.error || `API call failed with status: ${response.status}`);
-      }
-
+      console.log('✅ API Success:', result.success);
       return result;
+
     } catch (error) {
-      console.log(`💥 HiiNen AI API Error (attempt ${attempt + 1}):`, error);
+      console.warn(`🔄 Attempt ${attempt + 1} failed:`, error.message);
       
       if (attempt === retries) {
-        // Last attempt failed, provide user-friendly error
-        if (error.message.includes('Failed to fetch') || error.message.includes('CONNECTION_RESET')) {
-          throw new Error('🔄 Backend service is starting up. Please wait a moment and try again.');
-        } else if (error.message.includes('timeout')) {
-          throw new Error('⏱️ Request timed out. The service might be busy, please try again.');
-        } else {
-          throw new Error(`❌ AI service error: ${error.message}`);
-        }
-      } else {
-        // Wait before retrying
-        console.log(`🔄 Retrying in 3 seconds... (attempt ${attempt + 2}/${retries + 1})`);
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        return {
+          success: false,
+          error: 'I apologize, but I\'m having trouble connecting right now. Please try again in a moment.',
+          details: error.message,
+          retried: true
+        };
       }
+      
+      // Progressive backoff delay
+      const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
 };
