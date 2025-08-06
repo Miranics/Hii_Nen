@@ -1,16 +1,4 @@
-import { Geist, Geistexport default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <BackendWakeup />
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  )
-} "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import BackendWakeup from "../components/BackendWakeup";
@@ -37,6 +25,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <BackendWakeup />
         {children}
         <Analytics />
       </body>
