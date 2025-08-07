@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase';
@@ -9,6 +9,7 @@ import { Idea, Target, Rocket } from '../../../components/icons/ProfessionalIcon
 
 export default function IdeaValidationPage() {
   const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
   const [idea, setIdea] = useState('');
   const [targetMarket, setTargetMarket] = useState('');
   const [problem, setProblem] = useState('');
@@ -19,30 +20,46 @@ export default function IdeaValidationPage() {
 
   useEffect(() => {
     checkUser();
-  }, []);
+  }, [checkUser]);
 
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
+    setUserLoading(true);
     try {
-      const currentUser = await getCurrentUser();
-      if (!currentUser) {
+      const { user: currentUser, error } = await getCurrentUser();
+      if (error) {
+        console.error('Error getting user:', error);
         router.push('/login');
         return;
       }
+      if (!currentUser) {
+        console.log('No user found, redirecting to login');
+        router.push('/login');
+        return;
+      }
+      console.log('✅ User found:', currentUser.email);
       setUser(currentUser);
     } catch (error) {
       console.error('Error checking user:', error);
       router.push('/login');
+    } finally {
+      setUserLoading(false);
     }
-  };
+  }, [router]);
 
   const handleValidation = async (e) => {
     e.preventDefault();
     
+    console.log('🚀 Starting validation process...');
+    console.log('Current user state:', user);
+    
     if (!user?.id) {
-      console.error('No user found');
+      console.error('❌ No user found - current user state:', user);
+      alert('Please log in to validate your idea');
+      router.push('/login');
       return;
     }
 
+    console.log('✅ User authenticated, proceeding with validation');
     setLoading(true);
 
     try {
@@ -170,17 +187,27 @@ export default function IdeaValidationPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link 
-                href="/dashboard" 
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-              >
-                ← Back to Dashboard
-              </Link>
+      {/* Show loading while checking user authentication */}
+      {userLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading user session...</p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Header */}
+          <div className="bg-white dark:bg-gray-800 shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center space-x-4">
+                  <Link 
+                    href="/dashboard" 
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                  >
+                    ← Back to Dashboard
+                  </Link>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
                   <Idea className="w-5 h-5 text-white" />
@@ -391,6 +418,8 @@ export default function IdeaValidationPage() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
