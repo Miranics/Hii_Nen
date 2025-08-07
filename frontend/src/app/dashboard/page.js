@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, signOut } from '@/lib/supabase';
 import AIChatWidget from '@/components/AIChatWidget';
-import { callHiiNenAI, API_CONFIG } from '@/lib/api';
+import { callHiiNenAI, API_CONFIG, getUserProgress, completeUserGoal } from '@/lib/api';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -14,10 +14,12 @@ export default function DashboardPage() {
   const [aiInsights, setAiInsights] = useState([]);
   const [aiRecommendations, setAiRecommendations] = useState([]);
   const [insightsLoading, setInsightsLoading] = useState(false);
+  const [userProgress, setUserProgress] = useState(null);
+  const [progressLoading, setProgressLoading] = useState(false);
   const [stats, setStats] = useState({
     ideasValidated: 0,
-    launchProgress: 0,
-    connections: 0,
+    businessScore: 0,
+    networkConnections: 0,
     fundingReadiness: 0
   });
   const router = useRouter();
@@ -28,9 +30,46 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (user) {
+      fetchUserProgress();
       fetchAIInsights();
     }
   }, [user]);
+
+  const fetchUserProgress = async () => {
+    if (!user?.id) return;
+    
+    setProgressLoading(true);
+    try {
+      const result = await getUserProgress(user.id);
+      if (result.success && result.data) {
+        setUserProgress(result.data);
+        setStats({
+          ideasValidated: result.data.stats?.ideasValidated || 0,
+          businessScore: result.data.stats?.businessScore || 0,
+          networkConnections: result.data.stats?.networkConnections || 0,
+          fundingReadiness: result.data.stats?.fundingReadiness || 0
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user progress:', error);
+    } finally {
+      setProgressLoading(false);
+    }
+  };
+
+  const handleCompleteGoal = async (goalId) => {
+    if (!user?.id || !goalId) return;
+    
+    try {
+      const result = await completeUserGoal(user.id, goalId);
+      if (result.success) {
+        // Refresh user progress to reflect the completed goal
+        await fetchUserProgress();
+      }
+    } catch (error) {
+      console.error('Error completing goal:', error);
+    }
+  };
 
   const fetchAIInsights = async () => {
     setInsightsLoading(true);
@@ -39,7 +78,8 @@ export default function DashboardPage() {
         userProfile: {
           email: user?.email,
           metadata: user?.user_metadata,
-          stats: stats
+          stats: stats,
+          progress: userProgress
         },
         requestType: 'dashboard_insights'
       });
@@ -97,13 +137,7 @@ export default function DashboardPage() {
         return;
       }
       setUser(currentUser);
-      // Load user stats - for now using mock data
-      setStats({
-        ideasValidated: 3,
-        launchProgress: 67,
-        connections: 12,
-        fundingReadiness: 85
-      });
+      // User progress will be fetched automatically by useEffect when user is set
     } catch (error) {
       console.error('Error checking user:', error);
       router.push('/login');
@@ -351,7 +385,7 @@ export default function DashboardPage() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Business Score</dt>
-                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.launchProgress}/100</dd>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.businessScore}/100</dd>
                     </dl>
                   </div>
                 </div>
@@ -369,7 +403,7 @@ export default function DashboardPage() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Network Connections</dt>
-                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.connections}</dd>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{stats.networkConnections}</dd>
                     </dl>
                   </div>
                 </div>
@@ -486,33 +520,59 @@ export default function DashboardPage() {
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md rounded-2xl shadow-sm p-6 animate-fadeInUp stagger-delay-4 border border-white/20">
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">This Week's Goals</h2>
                   <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center mt-1">
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
+                    {progressLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                        <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">Loading goals...</span>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Complete market research survey</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Completed 2 days ago</p>
+                    ) : userProgress?.weeklyGoals && userProgress.weeklyGoals.length > 0 ? (
+                      userProgress.weeklyGoals.slice(0, 5).map((goal) => (
+                        <div key={goal._id} className="flex items-start space-x-3">
+                          <button
+                            onClick={() => !goal.completed && handleCompleteGoal(goal._id)}
+                            disabled={goal.completed}
+                            className={`w-5 h-5 rounded-full flex items-center justify-center mt-1 transition-colors ${
+                              goal.completed 
+                                ? 'bg-green-500 cursor-default' 
+                                : 'border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 cursor-pointer'
+                            }`}
+                          >
+                            {goal.completed && (
+                              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </button>
+                          <div className="flex-1">
+                            <p className={`text-sm font-medium ${goal.completed ? 'text-gray-500 dark:text-gray-400 line-through' : 'text-gray-900 dark:text-white'}`}>
+                              {goal.title}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {goal.completed 
+                                ? `Completed ${new Date(goal.completedAt).toLocaleDateString()}`
+                                : `Due ${new Date(goal.dueDate).toLocaleDateString()}`
+                              }
+                            </p>
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            goal.priority === 'high' 
+                              ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200'
+                              : goal.priority === 'medium'
+                              ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                          }`}>
+                            {goal.priority}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-400">No goals set for this week.</p>
+                        <button className="mt-2 text-blue-600 dark:text-blue-400 hover:underline text-sm">
+                          Add your first goal
+                        </button>
                       </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-1">
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Finalize MVP feature list</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">In progress • Due tomorrow</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full mt-1"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">Schedule investor meetings</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Pending • Due Friday</p>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>

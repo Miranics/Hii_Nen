@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { callHiiNenAI, API_CONFIG, checkBackendHealth } from '../lib/api';
+import { callHiiNenAI, API_CONFIG, checkBackendHealth, recordAIInteraction } from '../lib/api';
 
 export default function AIChatWidget({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -84,6 +84,21 @@ export default function AIChatWidget({ user }) {
         setMessages(prev => [...prev, aiMessage]);
         setBackendStatus('online');
         setConnectionAttempts(0);
+        
+        // Record the interaction for personalization (if user is available)
+        if (user?.id) {
+          try {
+            await recordAIInteraction(user.id, {
+              topic: 'general_chat',
+              question: inputMessage,
+              response: data.response,
+              insights: data.insights || [],
+              recommendations: data.recommendations || []
+            });
+          } catch (recordError) {
+            console.warn('Failed to record AI interaction:', recordError);
+          }
+        }
       } else {
         throw new Error(data.error || 'Failed to get AI response');
       }

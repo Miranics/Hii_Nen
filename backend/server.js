@@ -9,6 +9,7 @@ import userRoutes from './routes/users.js';
 import ideaRoutes from './routes/ideas.js';
 import mentorRoutes from './routes/mentors.js';
 import aiRoutes from './routes/ai.js';
+import userProgressRoutes from './routes/user-progress.js';
 
 // Load environment variables
 dotenv.config();
@@ -87,6 +88,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/ideas', ideaRoutes);
 app.use('/api/mentors', mentorRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/user-progress', userProgressRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
