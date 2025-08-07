@@ -1,3 +1,4 @@
+-- Active: 1752348024271@@db.bipmqxgwdxtksipqdrat.supabase.co@5432
 -- Create user_progress table for personalized dashboard data
 CREATE TABLE IF NOT EXISTS user_progress (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

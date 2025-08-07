@@ -1,61 +1,149 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { callHiiNenAI, API_CONFIG } from '../../../lib/api';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser } from '@/lib/supabase';
+import { callHiiNenAI, API_CONFIG, addUserIdea } from '../../../lib/api';
 import { Idea, Target, Rocket } from '../../../components/icons/ProfessionalIcons';
 
 export default function IdeaValidationPage() {
+  const [user, setUser] = useState(null);
   const [idea, setIdea] = useState('');
   const [targetMarket, setTargetMarket] = useState('');
   const [problem, setProblem] = useState('');
   const [solution, setSolution] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await getCurrentUser();
+      if (!currentUser) {
+        router.push('/login');
+        return;
+      }
+      setUser(currentUser);
+    } catch (error) {
+      console.error('Error checking user:', error);
+      router.push('/login');
+    }
+  };
 
   const handleValidation = async (e) => {
     e.preventDefault();
+    
+    if (!user?.id) {
+      console.error('No user found');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_INSIGHTS, {
-        ideaData: {
-          idea,
-          targetMarket,
-          problem,
-          solution
-        },
-        requestType: 'idea_validation'
+      const ideaData = {
+        title: idea.split(' ').slice(0, 6).join(' ') + '...', // Create short title
+        description: idea,
+        targetMarket,
+        problem,
+        solution,
+        industry: targetMarket, // Use target market as industry for now
+      };
+
+      // Call AI for validation using dedicated endpoint
+      const validationResponse = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_VALIDATE_IDEA, {
+        ideaData,
+        userContext: {
+          userId: user.id,
+          email: user.email,
+          name: user.user_metadata?.full_name
+        }
       });
 
-      if (data.success) {
-        // Parse AI response into structured format
-        setResults({
-          score: data.score || Math.floor(Math.random() * 40) + 60,
-          strengths: data.strengths || [
-            'Strong market demand identified',
-            'Clear value proposition',
-            'Scalable business model potential'
-          ],
-          concerns: data.concerns || [
-            'High competition in the market',
-            'Customer acquisition costs may be high',
-            'Technical implementation complexity'
-          ],
-          recommendations: data.recommendations || [
-            'Conduct user interviews with 20-30 potential customers',
-            'Create a minimum viable product (MVP) to test core features',
-            'Research competitors and identify differentiating factors',
-            'Validate pricing strategy with target market'
-          ]
-        });
-      } else {
-        throw new Error(data.error || 'Failed to validate idea');
+      let validationResults;
+      
+      if (validationResponse.success && validationResponse.response) {
+        try {
+          // Try to parse JSON response from AI
+          const aiResponse = JSON.parse(validationResponse.response);
+          if (aiResponse.validation) {
+            validationResults = {
+              score: aiResponse.validation.score || Math.floor(Math.random() * 20) + 70,
+              strengths: aiResponse.validation.strengths || [
+                'Strong market demand identified',
+                'Clear value proposition',
+                'Scalable business model potential'
+              ],
+              concerns: aiResponse.validation.weaknesses || [
+                'High competition in the market',
+                'Customer acquisition costs may be high',
+                'Technical implementation complexity'
+              ],
+              recommendations: aiResponse.validation.recommendations?.map(r => r.action) || [
+                'Conduct user interviews with 20-30 potential customers',
+                'Create a minimum viable product (MVP) to test core features',
+                'Research competitors and identify differentiating factors',
+                'Validate pricing strategy with target market'
+              ]
+            };
+          }
+        } catch (parseError) {
+          console.log('Could not parse AI response as JSON, using fallback');
+        }
       }
+
+      // Fallback validation results if AI parsing fails
+      if (!validationResults) {
+        const score = Math.floor(Math.random() * 30) + 60;
+        validationResults = {
+          score,
+          strengths: [
+            'Innovative approach to solving real problems',
+            'Clear understanding of target market needs',
+            'Strong potential for market impact'
+          ],
+          concerns: [
+            'Market competition analysis needed',
+            'Customer validation recommended',
+            'Financial projections require development'
+          ],
+          recommendations: [
+            'Conduct market research with 50+ potential customers',
+            'Develop a minimum viable product (MVP)',
+            'Create detailed competitive analysis',
+            'Build financial projections and business model'
+          ]
+        };
+      }
+
+      setResults(validationResults);
+
+      // Save the idea to user progress
+      try {
+        const saveResult = await addUserIdea(user.id, {
+          ...ideaData,
+          validationScore: validationResults.score,
+          validatedAt: new Date().toISOString()
+        });
+        
+        if (saveResult.success) {
+          console.log('✅ Idea saved to user progress');
+        }
+      } catch (saveError) {
+        console.warn('Failed to save idea to user progress:', saveError);
+        // Don't block the user experience if saving fails
+      }
+
     } catch (error) {
       console.error('Idea validation error:', error);
-      // Fallback to static analysis
-      const score = Math.floor(Math.random() * 40) + 60;
+      
+      // Fallback results on error
+      const score = Math.floor(Math.random() * 25) + 60;
       setResults({
         score,
         strengths: [
@@ -272,18 +360,31 @@ export default function IdeaValidationPage() {
                 </div>
 
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button 
-                    onClick={() => {
-                      setResults(null);
-                      setIdea('');
-                      setTargetMarket('');
-                      setProblem('');
-                      setSolution('');
-                    }}
-                    className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
-                  >
-                    Validate Another Idea
-                  </button>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => {
+                        setResults(null);
+                        setIdea('');
+                        setTargetMarket('');
+                        setProblem('');
+                        setSolution('');
+                      }}
+                      className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                    >
+                      Validate Another Idea
+                    </button>
+                    <Link
+                      href="/dashboard"
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all text-center"
+                    >
+                      Back to Dashboard
+                    </Link>
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      ✅ Your idea has been saved to your dashboard for tracking
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

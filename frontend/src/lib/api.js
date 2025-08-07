@@ -7,6 +7,7 @@ export const API_CONFIG = {
     AI_CHAT: '/api/ai/chat',
     AI_INSIGHTS: '/api/ai/insights',
     AI_MARKET_ANALYSIS: '/api/ai/market-analysis',
+    AI_VALIDATE_IDEA: '/api/ai/validate-idea',
     HEALTH: '/api/health',
     USER_PROGRESS: '/api/user-progress',
     USER_PROGRESS_IDEAS: '/api/user-progress/ideas',
