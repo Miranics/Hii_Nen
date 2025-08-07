@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase';
@@ -19,31 +19,31 @@ export default function IdeaValidationPage() {
   const router = useRouter();
 
   useEffect(() => {
-    checkUser();
-  }, [checkUser]);
+    const checkUser = async () => {
+      setUserLoading(true);
+      try {
+        const { user: currentUser, error } = await getCurrentUser();
+        if (error) {
+          console.error('Error getting user:', error);
+          router.push('/login');
+          return;
+        }
+        if (!currentUser) {
+          console.log('No user found, redirecting to login');
+          router.push('/login');
+          return;
+        }
+        console.log('✅ User found:', currentUser.email);
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Error checking user:', error);
+        router.push('/login');
+      } finally {
+        setUserLoading(false);
+      }
+    };
 
-  const checkUser = useCallback(async () => {
-    setUserLoading(true);
-    try {
-      const { user: currentUser, error } = await getCurrentUser();
-      if (error) {
-        console.error('Error getting user:', error);
-        router.push('/login');
-        return;
-      }
-      if (!currentUser) {
-        console.log('No user found, redirecting to login');
-        router.push('/login');
-        return;
-      }
-      console.log('✅ User found:', currentUser.email);
-      setUser(currentUser);
-    } catch (error) {
-      console.error('Error checking user:', error);
-      router.push('/login');
-    } finally {
-      setUserLoading(false);
-    }
+    checkUser();
   }, [router]);
 
   const handleValidation = async (e) => {
