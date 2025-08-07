@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase';
 import { callHiiNenAI, API_CONFIG, addUserIdea } from '../../../lib/api';
-import { Idea, Target, Rocket } from '../../../components/icons/ProfessionalIcons';
+import { IdeaIcon, TargetIcon, RocketIcon } from '../../../components/icons/ProfessionalIcons';
 
 export default function IdeaValidationPage() {
   const [user, setUser] = useState(null);
@@ -210,7 +210,7 @@ export default function IdeaValidationPage() {
                   </Link>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Idea className="w-5 h-5 text-white" />
+                  <IdeaIcon className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                   Idea Validation
@@ -298,7 +298,7 @@ export default function IdeaValidationPage() {
                   </div>
                 ) : (
                   <>
-                    <Rocket className="w-5 h-5 mr-2" />
+                    <RocketIcon className="w-5 h-5 mr-2" />
                     Validate My Idea
                   </>
                 )}
@@ -373,7 +373,7 @@ export default function IdeaValidationPage() {
                 {/* Recommendations */}
                 <div>
                   <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-2">
-                    <Target className="w-5 h-5" />
+                    <TargetIcon className="w-5 h-5" />
                     Next Steps
                   </h3>
                   <ul className="space-y-2">
