@@ -220,9 +220,7 @@ export default function IdeaValidationPage() {
                   </Link>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">💡</span>
-                  </div>
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg"></div>
                   <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Idea Validation
                   </h1>
@@ -309,7 +307,6 @@ export default function IdeaValidationPage() {
                       </div>
                     ) : (
                       <div className="flex items-center justify-center">
-                        <span className="mr-2">🚀</span>
                         Validate My Idea
                       </div>
                     )}
@@ -353,8 +350,8 @@ export default function IdeaValidationPage() {
 
                     {/* Strengths */}
                     <div>
-                      <h3 className="font-semibold text-green-600 dark:text-green-400 mb-3 flex items-center">
-                        ✅ Strengths
+                      <h3 className="font-semibold text-green-600 dark:text-green-400 mb-3">
+                        Strengths
                       </h3>
                       <ul className="space-y-2">
                         {results.strengths.map((strength, index) => (
@@ -368,8 +365,8 @@ export default function IdeaValidationPage() {
 
                     {/* Concerns */}
                     <div>
-                      <h3 className="font-semibold text-yellow-600 dark:text-yellow-400 mb-3 flex items-center">
-                        ⚠️ Areas of Concern
+                      <h3 className="font-semibold text-yellow-600 dark:text-yellow-400 mb-3">
+                        Areas of Concern
                       </h3>
                       <ul className="space-y-2">
                         {results.concerns.map((concern, index) => (
@@ -383,8 +380,8 @@ export default function IdeaValidationPage() {
 
                     {/* Recommendations */}
                     <div>
-                      <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-2">
-                        🎯 Next Steps
+                      <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-3">
+                        Next Steps
                       </h3>
                       <ul className="space-y-2">
                         {results.recommendations.map((rec, index) => (
