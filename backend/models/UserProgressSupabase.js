@@ -106,12 +106,11 @@ export class UserProgressService {
           updated_at: new Date().toISOString()
         })
         .eq('user_id', userId)
-        .select()
-        .single();
+        .select();
 
       if (error) throw error;
 
-      return { success: true, data };
+      return { success: true, data: data[0] };
     } catch (error) {
       console.error('Error updating user progress:', error);
       return { success: false, error: error.message };
@@ -121,12 +120,20 @@ export class UserProgressService {
   // Add new idea
   static async addIdea(userId, ideaData) {
     try {
-      // Get current progress
-      const { data: progress } = await supabase
+      // First ensure user progress exists
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        throw new Error(progressResult.error);
+      }
+
+      // Get current progress (now we're sure it exists)
+      const { data: progress, error: fetchError } = await supabase
         .from('user_progress')
-        .select('ideas, stats')
+        .select('ideas, stats, weekly_goals')
         .eq('user_id', userId)
         .single();
+
+      if (fetchError) throw fetchError;
 
       const newIdea = {
         id: Date.now(),
@@ -158,15 +165,14 @@ export class UserProgressService {
           updated_at: new Date().toISOString()
         })
         .eq('user_id', userId)
-        .select()
-        .single();
+        .select();
 
       if (error) throw error;
 
       // Add activity
       await this.addActivity(userId, 'idea_created', `New idea: ${ideaData.title}`, `Added "${ideaData.title}" for validation`);
 
-      return { success: true, data };
+      return { success: true, data: data[0] };
     } catch (error) {
       console.error('Error adding idea:', error);
       return { success: false, error: error.message };
@@ -196,8 +202,7 @@ export class UserProgressService {
           updated_at: new Date().toISOString()
         })
         .eq('user_id', userId)
-        .select()
-        .single();
+        .select();
 
       if (error) throw error;
 
@@ -206,7 +211,7 @@ export class UserProgressService {
         await this.addActivity(userId, 'goal_completed', `Completed: ${completedGoal.title}`, completedGoal.description);
       }
 
-      return { success: true, data };
+      return { success: true, data: data[0] };
     } catch (error) {
       console.error('Error completing goal:', error);
       return { success: false, error: error.message };
@@ -238,12 +243,11 @@ export class UserProgressService {
           updated_at: new Date().toISOString()
         })
         .eq('user_id', userId)
-        .select()
-        .single();
+        .select();
 
       if (error) throw error;
 
-      return { success: true, data };
+      return { success: true, data: data[0] };
     } catch (error) {
       console.error('Error recording AI interaction:', error);
       return { success: false, error: error.message };

@@ -166,6 +166,7 @@ export default function IdeaValidationPage() {
 
       // Save the idea to user progress
       try {
+        console.log('💾 Saving idea to user progress...');
         const saveResult = await addUserIdea(user.id, {
           ...ideaData,
           validationScore: validationResults.score,
@@ -179,10 +180,13 @@ export default function IdeaValidationPage() {
           await loadValidatedIdeas();
         } else {
           console.warn('❌ Failed to save idea:', saveResult.error);
+          // Show user-friendly message but don't block the experience
+          alert('Your idea was validated successfully, but we had trouble saving it to your progress. The validation results are still shown below.');
         }
       } catch (saveError) {
         console.warn('❌ Failed to save idea to user progress:', saveError);
-        // Don't block the user experience if saving fails
+        // Show user-friendly message but don't block the experience
+        alert('Your idea was validated successfully, but we had trouble saving it to your progress. The validation results are still shown below.');
       }
 
     } catch (error) {
