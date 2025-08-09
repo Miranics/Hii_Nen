@@ -10,10 +10,10 @@ export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState('30d');
   const [analytics, setAnalytics] = useState({
     ideaValidations: {
-      total: 8,
-      thisMonth: 3,
-      avgScore: 76,
-      trend: '+12%'
+      total: 0,
+      thisMonth: 0,
+      avgScore: 0,
+      trend: '+0%'
     },
     businessHealth: {
       score: 85,
@@ -37,7 +37,46 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     checkUser();
+    loadAnalytics();
   }, []);
+
+  const loadAnalytics = () => {
+    // Load validated ideas from local storage
+    const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+    const totalIdeas = localIdeas.length;
+    
+    // Calculate this month's ideas
+    const thisMonth = new Date().getMonth();
+    const thisYear = new Date().getFullYear();
+    const thisMonthIdeas = localIdeas.filter(idea => {
+      const ideaDate = new Date(idea.validatedAt);
+      return ideaDate.getMonth() === thisMonth && ideaDate.getFullYear() === thisYear;
+    }).length;
+    
+    // Calculate average score
+    const avgScore = totalIdeas > 0 
+      ? Math.round(localIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / totalIdeas)
+      : 0;
+    
+    setAnalytics(prev => ({
+      ...prev,
+      ideaValidations: {
+        total: totalIdeas,
+        thisMonth: thisMonthIdeas,
+        avgScore: avgScore,
+        trend: thisMonthIdeas > 0 ? `+${thisMonthIdeas}` : '0'
+      },
+      businessHealth: {
+        ...prev.businessHealth,
+        score: Math.min(100, avgScore + Math.floor(Math.random() * 20)),
+        fundingReadiness: Math.min(100, totalIdeas * 15 + avgScore * 0.3)
+      }
+    }));
+    
+    if (totalIdeas > 0) {
+      console.log(`📊 Analytics: Loaded ${totalIdeas} ideas from local storage`);
+    }
+  };
 
   const checkUser = async () => {
     try {
