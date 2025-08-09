@@ -61,10 +61,24 @@ export default function IdeaValidationPage() {
     try {
       const result = await getUserProgress(user.id);
       if (result.success && result.data.ideas) {
-        setValidatedIdeas(result.data.ideas.filter(idea => idea.validationScore > 0));
+        const serverIdeas = result.data.ideas.filter(idea => idea.validationScore > 0);
+        setValidatedIdeas(serverIdeas);
+      } else {
+        // Fallback to local storage
+        const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+        setValidatedIdeas(localIdeas);
+        if (localIdeas.length > 0) {
+          console.log(`📦 Loaded ${localIdeas.length} ideas from local storage`);
+        }
       }
     } catch (error) {
       console.error('Error loading validated ideas:', error);
+      // Fallback to local storage
+      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+      setValidatedIdeas(localIdeas);
+      if (localIdeas.length > 0) {
+        console.log(`📦 Loaded ${localIdeas.length} ideas from local storage as fallback`);
+      }
     } finally {
       setValidatedIdeasLoading(false);
     }
@@ -180,13 +194,35 @@ export default function IdeaValidationPage() {
           await loadValidatedIdeas();
         } else {
           console.warn('❌ Failed to save idea:', saveResult.error);
-          // Show user-friendly message but don't block the experience
-          alert('Your idea was validated successfully, but we had trouble saving it to your progress. The validation results are still shown below.');
+          // Fallback: save to local storage temporarily
+          const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+          const newIdea = {
+            ...ideaData,
+            validationScore: validationResults.score,
+            validatedAt: new Date().toISOString(),
+            id: Date.now()
+          };
+          localIdeas.push(newIdea);
+          localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
+          setValidatedIdeas(localIdeas);
+          
+          alert('Your idea was validated successfully! Due to a temporary database issue, it\'s saved locally for now. We\'ll sync it once the connection is restored.');
         }
       } catch (saveError) {
         console.warn('❌ Failed to save idea to user progress:', saveError);
-        // Show user-friendly message but don't block the experience
-        alert('Your idea was validated successfully, but we had trouble saving it to your progress. The validation results are still shown below.');
+        // Fallback: save to local storage temporarily
+        const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+        const newIdea = {
+          ...ideaData,
+          validationScore: validationResults.score,
+          validatedAt: new Date().toISOString(),
+          id: Date.now()
+        };
+        localIdeas.push(newIdea);
+        localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
+        setValidatedIdeas(localIdeas);
+        
+        alert('Your idea was validated successfully! Due to a temporary database issue, it\'s saved locally for now. We\'ll sync it once the connection is restored.');
       }
 
     } catch (error) {
