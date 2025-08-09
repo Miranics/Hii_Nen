@@ -11,8 +11,12 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const currentUser = await getCurrentUser();
+        const { user: currentUser, error } = await getCurrentUser();
+        if (error) {
+          console.error('Error checking user:', error);
+        }
         setUser(currentUser);
+        console.log('Dashboard Layout - User loaded:', currentUser?.email || 'No user');
       } catch (error) {
         console.error('Error checking user:', error);
       } finally {
@@ -36,7 +40,9 @@ export default function DashboardLayout({ children }) {
 
   return (
     <UserProgressProvider user={user}>
-      {children}
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        {children}
+      </div>
     </UserProgressProvider>
   );
 }

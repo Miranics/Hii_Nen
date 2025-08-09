@@ -19,25 +19,21 @@ initializeDatabase();
 
 const app = express();
 
-// Trust proxy for deployment on Render/Railway/etc
-app.set('trust proxy', true);
+// Trust proxy for deployment on Render/Railway/etc - commented out to avoid rate limiter issues
+// app.set('trust proxy', true);
 
 // Security middleware
 app.use(helmet());
 
-// Rate limiting - Configured for proxy environments
+// Rate limiting - Simplified for deployment environments
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  // Use a custom key generator for proxy environments
-  keyGenerator: (req) => {
-    return req.ip || req.connection.remoteAddress || 'anonymous';
-  },
+  // Skip rate limiting for health checks and avoid proxy trust issues
   skip: (req, res) => {
-    // Skip rate limiting for health checks
     return req.path === '/api/health';
   }
 });
