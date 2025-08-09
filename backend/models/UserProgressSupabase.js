@@ -131,8 +131,8 @@ export class UserProgressService {
       const newIdea = {
         id: Date.now(),
         ...ideaData,
-        stage: 'concept',
-        validationScore: 0,
+        stage: ideaData.stage || 'validated',
+        validationScore: ideaData.validationScore || 0,
         created_at: new Date().toISOString(),
         last_updated: new Date().toISOString()
       };
@@ -143,11 +143,18 @@ export class UserProgressService {
         ideasValidated: updatedIdeas.length
       };
 
+      // Calculate new scores based on updated data
+      const calculatedStats = this.calculateScores({ 
+        ideas: updatedIdeas, 
+        stats: updatedStats,
+        weekly_goals: progress?.weekly_goals || []
+      });
+
       const { data, error } = await supabase
         .from('user_progress')
         .update({
           ideas: updatedIdeas,
-          stats: this.calculateScores({ ideas: updatedIdeas, stats: updatedStats }),
+          stats: calculatedStats,
           updated_at: new Date().toISOString()
         })
         .eq('user_id', userId)

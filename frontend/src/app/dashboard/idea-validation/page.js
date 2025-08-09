@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase';
-import { callHiiNenAI, API_CONFIG, addUserIdea } from '../../../lib/api';
+import { callHiiNenAI, API_CONFIG, addUserIdea, getUserProgress } from '@/lib/api';
 
 export default function IdeaValidationPage() {
   const [user, setUser] = useState(null);
@@ -15,6 +15,8 @@ export default function IdeaValidationPage() {
   const [solution, setSolution] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
+  const [validatedIdeas, setValidatedIdeas] = useState([]);
+  const [validatedIdeasLoading, setValidatedIdeasLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,6 +46,29 @@ export default function IdeaValidationPage() {
 
     checkUser();
   }, [router]);
+
+  // Load validated ideas when user is available
+  useEffect(() => {
+    if (user?.id) {
+      loadValidatedIdeas();
+    }
+  }, [user]);
+
+  const loadValidatedIdeas = async () => {
+    if (!user?.id) return;
+    
+    setValidatedIdeasLoading(true);
+    try {
+      const result = await getUserProgress(user.id);
+      if (result.success && result.data.ideas) {
+        setValidatedIdeas(result.data.ideas.filter(idea => idea.validationScore > 0));
+      }
+    } catch (error) {
+      console.error('Error loading validated ideas:', error);
+    } finally {
+      setValidatedIdeasLoading(false);
+    }
+  };
 
   const handleValidation = async (e) => {
     e.preventDefault();
@@ -144,14 +169,19 @@ export default function IdeaValidationPage() {
         const saveResult = await addUserIdea(user.id, {
           ...ideaData,
           validationScore: validationResults.score,
-          validatedAt: new Date().toISOString()
+          validatedAt: new Date().toISOString(),
+          stage: 'validated'
         });
         
         if (saveResult.success) {
-          console.log('✅ Idea saved to user progress');
+          console.log('✅ Idea saved to user progress successfully');
+          // Refresh validated ideas list
+          await loadValidatedIdeas();
+        } else {
+          console.warn('❌ Failed to save idea:', saveResult.error);
         }
       } catch (saveError) {
-        console.warn('Failed to save idea to user progress:', saveError);
+        console.warn('❌ Failed to save idea to user progress:', saveError);
         // Don't block the user experience if saving fails
       }
 
@@ -397,6 +427,85 @@ export default function IdeaValidationPage() {
               </div>
             </div>
           </div>
+
+          {/* Validated Ideas Summary */}
+          {validatedIdeas.length > 0 && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Your Validated Ideas
+                  </h2>
+                  <span className="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                    {validatedIdeas.length} Ideas Validated
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  {validatedIdeas.map((idea, index) => (
+                    <div key={idea.id || index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                            {idea.title || idea.description?.substring(0, 50) + '...'}
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            {idea.description?.substring(0, 150) + (idea.description?.length > 150 ? '...' : '')}
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                            <span>Target: {idea.targetMarket}</span>
+                            <span>•</span>
+                            <span>Validated: {new Date(idea.validatedAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <div className="ml-4 text-center">
+                          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-white text-sm font-bold mb-1">
+                            {idea.validationScore}
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Score</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    General Insights: Your validated ideas show strong potential with an average score of{' '}
+                    <span className="font-semibold">
+                      {validatedIdeas.length > 0 
+                        ? Math.round(validatedIdeas.reduce((sum, idea) => sum + idea.validationScore, 0) / validatedIdeas.length)
+                        : 0
+                      }
+                    </span>. 
+                    {validatedIdeas.length >= 3 
+                      ? " You're building a solid portfolio of validated business ideas!"
+                      : " Keep validating more ideas to build a strong portfolio."}
+                  </p>
+                  <div className="flex justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-center">
+                      <div className="font-semibold text-green-600 dark:text-green-400">
+                        {validatedIdeas.filter(idea => idea.validationScore >= 80).length}
+                      </div>
+                      <div>Excellent</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-semibold text-blue-600 dark:text-blue-400">
+                        {validatedIdeas.filter(idea => idea.validationScore >= 60 && idea.validationScore < 80).length}
+                      </div>
+                      <div>Good</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-semibold text-yellow-600 dark:text-yellow-400">
+                        {validatedIdeas.filter(idea => idea.validationScore < 60).length}
+                      </div>
+                      <div>Needs Work</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
