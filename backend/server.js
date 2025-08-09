@@ -25,15 +25,17 @@ app.set('trust proxy', true);
 // Security middleware
 app.use(helmet());
 
-// Rate limiting - Simplified for proxy environments
+// Rate limiting - Configured for proxy environments
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  // Trust proxy but use default key generation
-  trustProxy: true,
+  // Use a custom key generator for proxy environments
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'anonymous';
+  },
   skip: (req, res) => {
     // Skip rate limiting for health checks
     return req.path === '/api/health';
