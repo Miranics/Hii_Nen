@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase.js';
+import { supabaseAdmin } from '../config/supabase.js';
 
 // Supabase-based User Progress Management
 export class UserProgressService {
@@ -7,7 +7,7 @@ export class UserProgressService {
   static async getUserProgress(userId) {
     try {
       // First try to get existing progress
-      let { data: progress, error } = await supabase
+      let { data: progress, error } = await supabaseAdmin
         .from('user_progress')
         .select('*')
         .eq('user_id', userId)
@@ -63,7 +63,7 @@ export class UserProgressService {
           updated_at: new Date().toISOString()
         };
 
-        const { data: newProgress, error: insertError } = await supabase
+        const { data: newProgress, error: insertError } = await supabaseAdmin
           .from('user_progress')
           .insert([defaultProgress])
           .select()
@@ -99,7 +99,7 @@ export class UserProgressService {
   // Update user progress
   static async updateUserProgress(userId, updateData) {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('user_progress')
         .update({
           ...updateData,
@@ -127,7 +127,7 @@ export class UserProgressService {
       }
 
       // Get current progress (now we're sure it exists)
-      const { data: progress, error: fetchError } = await supabase
+      const { data: progress, error: fetchError } = await supabaseAdmin
         .from('user_progress')
         .select('ideas, stats, weekly_goals')
         .eq('user_id', userId)
@@ -157,7 +157,7 @@ export class UserProgressService {
         weekly_goals: progress?.weekly_goals || []
       });
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('user_progress')
         .update({
           ideas: updatedIdeas,
@@ -183,7 +183,7 @@ export class UserProgressService {
   static async completeGoal(userId, goalId) {
     try {
       // Get current progress
-      const { data: progress } = await supabase
+      const { data: progress } = await supabaseAdmin
         .from('user_progress')
         .select('weekly_goals')
         .eq('user_id', userId)
@@ -195,7 +195,7 @@ export class UserProgressService {
           : goal
       );
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('user_progress')
         .update({
           weekly_goals: updatedGoals,
@@ -222,7 +222,7 @@ export class UserProgressService {
   static async recordAIInteraction(userId, interactionData) {
     try {
       // Get current interactions
-      const { data: progress } = await supabase
+      const { data: progress } = await supabaseAdmin
         .from('user_progress')
         .select('ai_interactions')
         .eq('user_id', userId)
@@ -236,7 +236,7 @@ export class UserProgressService {
 
       const updatedInteractions = [newInteraction, ...(progress?.ai_interactions || [])].slice(0, 100);
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('user_progress')
         .update({
           ai_interactions: updatedInteractions,
@@ -257,7 +257,7 @@ export class UserProgressService {
   // Add activity to timeline
   static async addActivity(userId, type, title, description) {
     try {
-      const { data: progress } = await supabase
+      const { data: progress } = await supabaseAdmin
         .from('user_progress')
         .select('activities')
         .eq('user_id', userId)
@@ -273,7 +273,7 @@ export class UserProgressService {
 
       const updatedActivities = [newActivity, ...(progress?.activities || [])].slice(0, 50);
 
-      await supabase
+      await supabaseAdmin
         .from('user_progress')
         .update({
           activities: updatedActivities,
