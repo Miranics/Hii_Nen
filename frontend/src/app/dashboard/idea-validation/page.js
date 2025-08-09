@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase';
 import { callHiiNenAI, API_CONFIG, addUserIdea, getUserProgress } from '@/lib/api';
+import { useUserProgress } from '@/contexts/UserProgressContext';
 
 export default function IdeaValidationPage() {
   const [user, setUser] = useState(null);
@@ -15,8 +16,9 @@ export default function IdeaValidationPage() {
   const [solution, setSolution] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
-  const [validatedIdeas, setValidatedIdeas] = useState([]);
-  const [validatedIdeasLoading, setValidatedIdeasLoading] = useState(false);
+  
+  // Use context for validated ideas
+  const { validatedIdeas, addValidatedIdea, refreshData } = useUserProgress();
   const router = useRouter();
 
   useEffect(() => {
@@ -47,42 +49,12 @@ export default function IdeaValidationPage() {
     checkUser();
   }, [router]);
 
-  // Load validated ideas when user is available
+  // Load validated ideas using context
   useEffect(() => {
     if (user?.id) {
-      loadValidatedIdeas();
+      loadUserProgress();
     }
   }, [user]);
-
-  const loadValidatedIdeas = async () => {
-    if (!user?.id) return;
-    
-    setValidatedIdeasLoading(true);
-    try {
-      const result = await getUserProgress(user.id);
-      if (result.success && result.data.ideas) {
-        const serverIdeas = result.data.ideas.filter(idea => idea.validationScore > 0);
-        setValidatedIdeas(serverIdeas);
-      } else {
-        // Fallback to local storage
-        const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-        setValidatedIdeas(localIdeas);
-        if (localIdeas.length > 0) {
-          console.log(`📦 Loaded ${localIdeas.length} ideas from local storage`);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading validated ideas:', error);
-      // Fallback to local storage
-      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-      setValidatedIdeas(localIdeas);
-      if (localIdeas.length > 0) {
-        console.log(`📦 Loaded ${localIdeas.length} ideas from local storage as fallback`);
-      }
-    } finally {
-      setValidatedIdeasLoading(false);
-    }
-  };
 
   const handleValidation = async (e) => {
     e.preventDefault();
@@ -178,51 +150,27 @@ export default function IdeaValidationPage() {
 
       setResults(validationResults);
 
-      // Save the idea to user progress
+      // Save the idea to user progress using context
       try {
         console.log('💾 Saving idea to user progress...');
-        const saveResult = await addUserIdea(user.id, {
-          ...ideaData,
-          validationScore: validationResults.score,
-          validatedAt: new Date().toISOString(),
-          stage: 'validated'
-        });
-        
-        if (saveResult.success) {
-          console.log('✅ Idea saved to user progress successfully');
-          // Refresh validated ideas list
-          await loadValidatedIdeas();
-        } else {
-          console.warn('❌ Failed to save idea:', saveResult.error);
-          // Fallback: save to local storage temporarily
-          const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-          const newIdea = {
-            ...ideaData,
-            validationScore: validationResults.score,
-            validatedAt: new Date().toISOString(),
-            id: Date.now()
-          };
-          localIdeas.push(newIdea);
-          localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
-          setValidatedIdeas(localIdeas);
-          
-          alert('Your idea was validated successfully! Due to a temporary database issue, it\'s saved locally for now. We\'ll sync it once the connection is restored.');
-        }
-      } catch (saveError) {
-        console.warn('❌ Failed to save idea to user progress:', saveError);
-        // Fallback: save to local storage temporarily
-        const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
         const newIdea = {
           ...ideaData,
           validationScore: validationResults.score,
           validatedAt: new Date().toISOString(),
-          id: Date.now()
+          stage: 'validated'
         };
-        localIdeas.push(newIdea);
-        localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
-        setValidatedIdeas(localIdeas);
         
-        alert('Your idea was validated successfully! Due to a temporary database issue, it\'s saved locally for now. We\'ll sync it once the connection is restored.');
+        const success = await addValidatedIdea(newIdea);
+        if (success) {
+          console.log('✅ Idea saved successfully and added to context');
+          alert('Your idea was validated successfully!');
+        } else {
+          console.warn('❌ Failed to save idea, but it\'s saved locally');
+          alert('Your idea was validated successfully! Due to a temporary database issue, it\'s saved locally for now.');
+        }
+      } catch (saveError) {
+        console.warn('❌ Failed to save idea to user progress:', saveError);
+        alert('Your idea was validated successfully! Due to a temporary issue, it\'s saved locally for now.');
       }
 
     } catch (error) {

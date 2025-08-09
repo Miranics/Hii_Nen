@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { getCurrentUser, signOut } from '@/lib/supabase';
 import AIChatWidget from '@/components/AIChatWidget';
-import { callHiiNenAI, API_CONFIG, getUserProgress, completeUserGoal } from '@/lib/api';
+import { callHiiNenAI, API_CONFIG, completeUserGoal } from '@/lib/api';
+import { useUserProgress } from '@/contexts/UserProgressContext';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -14,74 +15,32 @@ export default function DashboardPage() {
   const [aiInsights, setAiInsights] = useState([]);
   const [aiRecommendations, setAiRecommendations] = useState([]);
   const [insightsLoading, setInsightsLoading] = useState(false);
-  const [userProgress, setUserProgress] = useState(null);
-  const [progressLoading, setProgressLoading] = useState(false);
-  const [stats, setStats] = useState({
-    ideasValidated: 0,
-    businessScore: 0,
-    networkConnections: 0,
-    fundingReadiness: 0
-  });
+  
+  // Use the context for user progress data
+  const { userProgress, stats, loading: progressLoading, refreshData } = useUserProgress();
   const router = useRouter();
 
   useEffect(() => {
     checkUser();
-  }, []);
+  }, [checkUser]);
 
   useEffect(() => {
     if (user) {
-      fetchUserProgress();
       fetchAIInsights();
     }
-  }, [user]);
+  }, [user, fetchAIInsights]);
 
-  const fetchUserProgress = async () => {
-    if (!user?.id) return;
-    
-    setProgressLoading(true);
-    try {
-      const result = await getUserProgress(user.id);
-      if (result.success && result.data) {
-        setUserProgress(result.data);
-        setStats({
-          ideasValidated: result.data.stats?.ideasValidated || 0,
-          businessScore: result.data.stats?.businessScore || 0,
-          networkConnections: result.data.stats?.networkConnections || 0,
-          fundingReadiness: result.data.stats?.fundingReadiness || 0
-        });
-      } else {
-        // Fallback to local storage for ideas count
-        const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-        const localIdeasCount = localIdeas.length;
-        
-        setStats({
-          ideasValidated: localIdeasCount,
-          businessScore: Math.min(100, localIdeasCount * 15 + Math.random() * 20),
-          networkConnections: Math.floor(Math.random() * 10),
-          fundingReadiness: Math.min(100, localIdeasCount * 20 + Math.random() * 30)
-        });
-        
-        console.log(`📦 Dashboard: Using ${localIdeasCount} ideas from local storage`);
+  // Refresh data when coming back to dashboard
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        refreshData();
       }
-    } catch (error) {
-      console.error('Error fetching user progress:', error);
-      
-      // Fallback to local storage for ideas count
-      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-      const localIdeasCount = localIdeas.length;
-      
-      setStats({
-        ideasValidated: localIdeasCount,
-        businessScore: Math.min(100, localIdeasCount * 15 + Math.random() * 20),
-        networkConnections: Math.floor(Math.random() * 10),
-        fundingReadiness: Math.min(100, localIdeasCount * 20 + Math.random() * 30)
-      });
-      
-      console.log(`📦 Dashboard fallback: Using ${localIdeasCount} ideas from local storage`);
-    } finally {
-      setProgressLoading(false);
-    }
-  };
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user, refreshData]);
 
   const handleCompleteGoal = async (goalId) => {
     if (!user?.id || !goalId) return;
@@ -90,14 +49,14 @@ export default function DashboardPage() {
       const result = await completeUserGoal(user.id, goalId);
       if (result.success) {
         // Refresh user progress to reflect the completed goal
-        await fetchUserProgress();
+        refreshData();
       }
     } catch (error) {
       console.error('Error completing goal:', error);
     }
   };
 
-  const fetchAIInsights = async () => {
+  const fetchAIInsights = useCallback(async () => {
     setInsightsLoading(true);
     try {
       const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_INSIGHTS, {
@@ -153,9 +112,9 @@ export default function DashboardPage() {
       ]);
     }
     setInsightsLoading(false);
-  };
+  }, [user, stats, userProgress]);
 
-  const checkUser = async () => {
+  const checkUser = useCallback(async () => {
     try {
       const currentUser = await getCurrentUser();
       if (!currentUser) {
@@ -170,7 +129,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   const handleLogout = async () => {
     try {
