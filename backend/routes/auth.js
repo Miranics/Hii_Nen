@@ -69,23 +69,49 @@ router.post(
       }
 
       // Create user profile in our custom table
-      const { data: profileData, error: profileError } = await supabaseAdmin
-        .from('user_profiles')
-        .insert([
-          {
-            id: authData.user.id,
-            email: authData.user.email,
-            full_name: fullName,
-            user_type: userType,
-            created_at: new Date().toISOString()
-          }
-        ])
-        .select()
-        .single();
+      try {
+        const { data: profileData, error: profileError } = await supabaseAdmin
+          .from('user_profiles')
+          .insert([
+            {
+              id: authData.user.id,
+              email: authData.user.email,
+              full_name: fullName,
+              user_type: userType,
+              created_at: new Date().toISOString()
+            }
+          ])
+          .select()
+          .single();
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // Don't fail the signup if profile creation fails
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          console.error('Profile error details:', JSON.stringify(profileError, null, 2));
+          
+          // Try to create with minimal data
+          const { data: retryData, error: retryError } = await supabaseAdmin
+            .from('user_profiles')
+            .upsert([
+              {
+                id: authData.user.id,
+                email: authData.user.email,
+                full_name: fullName,
+                user_type: userType
+              }
+            ])
+            .select()
+            .single();
+            
+          if (retryError) {
+            console.error('Profile retry failed:', retryError);
+          } else {
+            console.log('Profile created on retry:', retryData);
+          }
+        } else {
+          console.log('Profile created successfully:', profileData);
+        }
+      } catch (profileException) {
+        console.error('Profile creation exception:', profileException);
       }
 
       res.status(201).json({

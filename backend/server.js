@@ -25,28 +25,20 @@ app.set('trust proxy', true);
 // Security middleware
 app.use(helmet());
 
-// Rate limiting - Render-compatible configuration
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests from this IP, please try again later.',
-    retryAfter: Math.ceil(15 * 60 / 60) + ' minutes'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  // Skip rate limiting for health checks
-  skip: (req, res) => {
-    return req.path === '/api/health';
-  },
-  // Disable validation to prevent Render proxy issues
-  validate: false,
-  // Better key generation for proxied environments
-  keyGenerator: (req) => {
-    return req.ip || req.connection.remoteAddress || 'unknown';
-  }
-});
-app.use('/api/', limiter);
+// Rate limiting - Disabled for production to avoid proxy issues
+if (process.env.NODE_ENV !== 'production') {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+    message: 'Too many requests, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false
+  });
+  app.use('/api/', limiter);
+  console.log('🛡️ Rate limiting enabled for development');
+} else {
+  console.log('🚀 Rate limiting disabled for production');
+}
 
 // CORS configuration - Updated for production
 const allowedOrigins = [
