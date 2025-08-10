@@ -25,7 +25,7 @@ app.set('trust proxy', true);
 // Security middleware
 app.use(helmet());
 
-// Rate limiting - Production-ready configuration
+// Rate limiting - Render-compatible configuration
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
@@ -39,9 +39,11 @@ const limiter = rateLimit({
   skip: (req, res) => {
     return req.path === '/api/health';
   },
+  // Disable validation to prevent Render proxy issues
+  validate: false,
   // Better key generation for proxied environments
   keyGenerator: (req) => {
-    return req.ip;
+    return req.ip || req.connection.remoteAddress || 'unknown';
   }
 });
 app.use('/api/', limiter);
@@ -129,4 +131,5 @@ app.listen(PORT, () => {
   console.log(`🚀 HiiNen API Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV}`);
   console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🔧 Trust proxy: enabled for Render deployment`);
 });
