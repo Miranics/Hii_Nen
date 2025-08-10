@@ -16,7 +16,6 @@ export default function DashboardLayout({ children }) {
           console.error('Error checking user:', error);
         }
         setUser(currentUser);
-        console.log('Dashboard Layout - User loaded:', currentUser?.email || 'No user');
       } catch (error) {
         console.error('Error checking user:', error);
       } finally {

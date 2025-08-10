@@ -23,8 +23,6 @@ export const UserProgressProvider = ({ children, user }) => {
     fundingReadiness: 0
   });
   const [loading, setLoading] = useState(false);
-  
-  console.log('UserProgressProvider - User prop:', user?.email || 'No user');
 
   // Load data from both server and local storage
   const loadUserProgress = useCallback(async (forceRefresh = false) => {

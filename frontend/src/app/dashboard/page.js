@@ -20,41 +20,23 @@ export default function DashboardPage() {
   const { userProgress, stats, loading: progressLoading, refreshData } = useUserProgress();
   const router = useRouter();
 
-  useEffect(() => {
-    checkUser();
-  }, [checkUser]);
-
-  useEffect(() => {
-    if (user) {
-      fetchAIInsights();
-    }
-  }, [user, fetchAIInsights]);
-
-  // Refresh data when coming back to dashboard
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && user) {
-        refreshData();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [user, refreshData]);
-
-  const handleCompleteGoal = async (goalId) => {
-    if (!user?.id || !goalId) return;
-    
+  // Define functions first with useCallback
+  const checkUser = useCallback(async () => {
     try {
-      const result = await completeUserGoal(user.id, goalId);
-      if (result.success) {
-        // Refresh user progress to reflect the completed goal
-        refreshData();
+      const currentUser = await getCurrentUser();
+      if (!currentUser) {
+        router.push('/login');
+        return;
       }
+      setUser(currentUser);
+      // User progress will be fetched automatically by useEffect when user is set
     } catch (error) {
-      console.error('Error completing goal:', error);
+      console.error('Error checking user:', error);
+      router.push('/login');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [router]);
 
   const fetchAIInsights = useCallback(async () => {
     setInsightsLoading(true);
@@ -114,22 +96,42 @@ export default function DashboardPage() {
     setInsightsLoading(false);
   }, [user, stats, userProgress]);
 
-  const checkUser = useCallback(async () => {
-    try {
-      const currentUser = await getCurrentUser();
-      if (!currentUser) {
-        router.push('/login');
-        return;
-      }
-      setUser(currentUser);
-      // User progress will be fetched automatically by useEffect when user is set
-    } catch (error) {
-      console.error('Error checking user:', error);
-      router.push('/login');
-    } finally {
-      setLoading(false);
+  // Now use the functions in useEffects
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
+
+  useEffect(() => {
+    if (user) {
+      fetchAIInsights();
     }
-  }, [router]);
+  }, [user, fetchAIInsights]);
+
+  // Refresh data when coming back to dashboard
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        refreshData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user, refreshData]);
+
+  const handleCompleteGoal = async (goalId) => {
+    if (!user?.id || !goalId) return;
+    
+    try {
+      const result = await completeUserGoal(user.id, goalId);
+      if (result.success) {
+        // Refresh user progress to reflect the completed goal
+        refreshData();
+      }
+    } catch (error) {
+      console.error('Error completing goal:', error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
