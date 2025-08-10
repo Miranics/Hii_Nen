@@ -152,9 +152,17 @@ export default function DashboardPage() {
     );
   }
 
-  const getUserInitials = (email) => {
-    if (!email) return 'U';
-    return email.substring(0, 2).toUpperCase();
+  const getUserInitials = (user) => {
+    if (user?.user_metadata?.full_name) {
+      const names = user.user_metadata.full_name.split(' ');
+      return names.length > 1 
+        ? names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase()
+        : names[0].charAt(0).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
   };
 
   const getUserName = () => {
@@ -194,7 +202,7 @@ export default function DashboardPage() {
               </button>
               <div className="relative group">
                 <button className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-semibold text-sm hover:from-blue-600 hover:to-purple-600 transition-all">
-                  {getUserInitials(user?.email)}
+                  {getUserInitials(user)}
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-xl shadow-xl py-2 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100 border border-white/20">
                   <div className="px-4 py-3 border-b border-gray-200/50 dark:border-gray-700/50">
