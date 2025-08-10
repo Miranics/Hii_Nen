@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { getCurrentUser } from '@/lib/supabase';
 import { UserProgressProvider } from '@/contexts/UserProgressContext';
+import DashboardSidebar from '@/components/Dashboard/DashboardSidebar';
+import DashboardHeader from '@/components/Dashboard/DashboardHeader';
 
 export default function DashboardLayout({ children }) {
   const [user, setUser] = useState(null);
@@ -28,10 +30,10 @@ export default function DashboardLayout({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -39,8 +41,18 @@ export default function DashboardLayout({ children }) {
 
   return (
     <UserProgressProvider user={user}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        {children}
+      <div className="min-h-screen bg-gray-50">
+        {/* Sidebar */}
+        <DashboardSidebar user={user} />
+        
+        {/* Main content */}
+        <div className="lg:pl-72">
+          <main className="py-6">
+            <div className="px-4 sm:px-6 lg:px-8">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
     </UserProgressProvider>
   );

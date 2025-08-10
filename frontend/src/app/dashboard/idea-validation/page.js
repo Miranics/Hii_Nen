@@ -18,7 +18,7 @@ export default function IdeaValidationPage() {
   const [results, setResults] = useState(null);
   
   // Use context for validated ideas
-  const { validatedIdeas, addValidatedIdea, refreshData } = useUserProgress();
+  const { validatedIdeas, addValidatedIdea, loadUserProgress } = useUserProgress();
   const router = useRouter();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function IdeaValidationPage() {
     if (user?.id) {
       loadUserProgress();
     }
-  }, [user]);
+  }, [user, loadUserProgress]);
 
   const handleValidation = async (e) => {
     e.preventDefault();

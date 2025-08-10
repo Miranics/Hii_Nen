@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const [insightsLoading, setInsightsLoading] = useState(false);
   
   // Use the context for user progress data
-  const { userProgress, stats, loading: progressLoading, refreshData } = useUserProgress();
+  const { userProgress, validatedIdeas, stats, loading: progressLoading, refreshData } = useUserProgress();
   const router = useRouter();
 
   // Define functions first with useCallback
@@ -55,46 +55,45 @@ export default function DashboardPage() {
         setAiInsights(data.insights || []);
         setAiRecommendations(data.recommendations || []);
       } else {
-        // Fallback to static insights if API fails
+        // Fallback with real user data
         setAiInsights([
           {
-            type: 'market_validation',
-            title: 'Market Validation Opportunity',
-            message: 'Based on your profile, I\'ve identified a 73% market fit potential for SaaS solutions in your industry. Consider validating with 50+ customer interviews before your next funding round.',
+            type: 'validation_progress',
+            title: 'Idea Validation Progress',
+            message: `You've validated ${stats.ideasValidated} ideas with an average score of ${validatedIdeas.length > 0 ? Math.round(validatedIdeas.reduce((sum, idea) => sum + idea.validationScore, 0) / validatedIdeas.length) : 0}%. Keep building your portfolio!`,
             color: 'blue',
-            action: 'Ask HiiNen'
+            action: 'Validate More'
           },
           {
-            type: 'funding',
-            title: 'Funding Readiness Assessment',
-            message: 'Your metrics show 85% readiness for Series A. Focus on improving monthly recurring revenue growth rate and customer acquisition cost optimization.',
-            color: 'green',
-            action: 'Get Strategy'
-          },
-          {
-            type: 'growth',
-            title: 'Growth Acceleration Tip',
-            message: 'Your current trajectory suggests implementing a referral program could increase user acquisition by 40%. I can help you design one tailored to your business model.',
-            color: 'purple',
-            action: 'Learn More'
+            type: 'business_score',
+            title: 'Business Health Score',
+            message: `Your current business score is ${stats.businessScore}%. ${stats.businessScore >= 70 ? 'Excellent progress!' : 'Focus on validation and market research to improve.'}`,
+            color: stats.businessScore >= 70 ? 'green' : 'yellow',
+            action: 'Improve Score'
           }
+        ]);
+        setAiRecommendations([
+          `Validate ${Math.max(0, 5 - stats.ideasValidated)} more ideas to reach expert level`,
+          'Connect with mentors in your industry',
+          'Complete your business model canvas',
+          'Research funding opportunities'
         ]);
       }
     } catch (error) {
       console.error('Error fetching AI insights:', error);
-      // Use static insights as fallback
+      // Use fallback with real data
       setAiInsights([
         {
-          type: 'market_validation',
-          title: 'Market Validation Opportunity',
-          message: 'Based on your profile, I\'ve identified a 73% market fit potential for SaaS solutions in your industry.',
+          type: 'welcome',
+          title: 'Welcome to HiiNen',
+          message: `${user?.user_metadata?.full_name || user?.email?.split('@')[0]}, start your entrepreneurial journey by validating your first business idea!`,
           color: 'blue',
-          action: 'Ask HiiNen'
+          action: 'Get Started'
         }
       ]);
     }
     setInsightsLoading(false);
-  }, [user, stats, userProgress]);
+  }, [user, stats, userProgress, validatedIdeas]);
 
   // Now use the functions in useEffects
   useEffect(() => {

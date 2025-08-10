@@ -5,7 +5,7 @@ import { getCurrentUser, updateUserProfile } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { UserProfileIcon, SettingsIcon } from '@/components/icons/DashboardIcons';
 
-export default function SettingsPage() {
+export default function EnhancedSettingsPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
