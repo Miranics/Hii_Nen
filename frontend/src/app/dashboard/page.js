@@ -11,7 +11,6 @@ import { useUserProgress } from '@/contexts/UserProgressContext';
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [aiInsights, setAiInsights] = useState([]);
   const [aiRecommendations, setAiRecommendations] = useState([]);
   const [insightsLoading, setInsightsLoading] = useState(false);
@@ -20,23 +19,14 @@ export default function DashboardPage() {
   const { userProgress, validatedIdeas, stats, loading: progressLoading, refreshData } = useUserProgress();
   const router = useRouter();
 
-  // Define functions first with useCallback
-  const checkUser = useCallback(async () => {
-    try {
+  // Get the current user for UI display
+  useEffect(() => {
+    async function getUser() {
       const currentUser = await getCurrentUser();
-      if (!currentUser) {
-        router.push('/login');
-        return;
-      }
       setUser(currentUser);
-      // User progress will be fetched automatically by useEffect when user is set
-    } catch (error) {
-      console.error('Error checking user:', error);
-      router.push('/login');
-    } finally {
-      setLoading(false);
     }
-  }, [router]);
+    getUser();
+  }, []);
 
   const fetchAIInsights = useCallback(async () => {
     setInsightsLoading(true);
@@ -95,11 +85,6 @@ export default function DashboardPage() {
     setInsightsLoading(false);
   }, [user, stats, userProgress, validatedIdeas]);
 
-  // Now use the functions in useEffects
-  useEffect(() => {
-    checkUser();
-  }, [checkUser]);
-
   useEffect(() => {
     if (user) {
       fetchAIInsights();
@@ -140,17 +125,6 @@ export default function DashboardPage() {
       console.error('Error signing out:', error);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
 
   const getUserInitials = (user) => {
     if (user?.user_metadata?.full_name) {

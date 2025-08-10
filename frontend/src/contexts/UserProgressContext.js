@@ -30,29 +30,51 @@ export const UserProgressProvider = ({ children, user }) => {
     
     setLoading(true);
     try {
+      console.log('📊 Loading user progress for user:', user.id);
+      
       // Try to get data from server
       const result = await getUserProgress(user.id);
-      let serverIdeas = [];
       
       if (result.success && result.data) {
+        console.log('✅ Server data received:', result.data);
         setUserProgress(result.data);
-        serverIdeas = result.data.ideas?.filter(idea => idea.validationScore > 0) || [];
+        
+        // Extract validated ideas from server data
+        const serverIdeas = result.data.ideas?.filter(idea => 
+          idea.stage === 'validated' && idea.validationScore && idea.validationScore > 0
+        ) || [];
+        
+        console.log(`📈 Found ${serverIdeas.length} validated ideas:`, serverIdeas);
         
         if (serverIdeas.length > 0) {
           setValidatedIdeas(serverIdeas);
-          setStats(result.data.stats || {
+          
+          // Calculate proper stats from server data
+          const avgScore = serverIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / serverIdeas.length;
+          const calculatedStats = {
             ideasValidated: serverIdeas.length,
-            businessScore: 0,
-            networkConnections: 0,
-            fundingReadiness: 0
-          });
-          console.log(`✅ Loaded ${serverIdeas.length} ideas from server`);
+            businessScore: Math.min(100, Math.round(serverIdeas.length * 15 + avgScore * 0.5)),
+            networkConnections: result.data.network?.peers?.length || 0,
+            fundingReadiness: Math.min(100, Math.round(serverIdeas.length * 20 + avgScore * 0.3))
+          };
+          
+          setStats(calculatedStats);
+          console.log('📊 Calculated stats:', calculatedStats);
+          
+          // Update local storage with server data
+          localStorage.setItem('validatedIdeas', JSON.stringify(serverIdeas));
           return; // Use server data if available
+        } else {
+          console.log('⚠️ No validated ideas found in server data');
         }
+      } else {
+        console.log('❌ Server request failed or no data:', result);
       }
       
       // Fallback to local storage
       const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+      console.log(`📦 Local storage fallback: ${localIdeas.length} ideas`);
+      
       if (localIdeas.length > 0 || forceRefresh) {
         setValidatedIdeas(localIdeas);
         
@@ -61,18 +83,19 @@ export const UserProgressProvider = ({ children, user }) => {
           ? localIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / localIdeasCount
           : 0;
         
-        setStats({
+        const fallbackStats = {
           ideasValidated: localIdeasCount,
-          businessScore: Math.min(100, localIdeasCount * 15 + avgScore * 0.2),
+          businessScore: Math.min(100, Math.round(localIdeasCount * 15 + avgScore * 0.2)),
           networkConnections: Math.floor(Math.random() * 10),
-          fundingReadiness: Math.min(100, localIdeasCount * 20 + avgScore * 0.3)
-        });
+          fundingReadiness: Math.min(100, Math.round(localIdeasCount * 20 + avgScore * 0.3))
+        };
         
-        console.log(`📦 Loaded ${localIdeasCount} ideas from local storage`);
+        setStats(fallbackStats);
+        console.log(`📦 Using local storage with stats:`, fallbackStats);
       }
       
     } catch (error) {
-      console.error('Error loading user progress:', error);
+      console.error('❌ Error loading user progress:', error);
       
       // Always fallback to local storage on error
       const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
@@ -83,12 +106,15 @@ export const UserProgressProvider = ({ children, user }) => {
         ? localIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / localIdeasCount
         : 0;
       
-      setStats({
+      const errorStats = {
         ideasValidated: localIdeasCount,
-        businessScore: Math.min(100, localIdeasCount * 15 + avgScore * 0.2),
+        businessScore: Math.min(100, Math.round(localIdeasCount * 15 + avgScore * 0.2)),
         networkConnections: Math.floor(Math.random() * 10),
-        fundingReadiness: Math.min(100, localIdeasCount * 20 + avgScore * 0.3)
-      });
+        fundingReadiness: Math.min(100, Math.round(localIdeasCount * 20 + avgScore * 0.3))
+      };
+      
+      setStats(errorStats);
+      console.log(`💾 Error fallback stats:`, errorStats);
     } finally {
       setLoading(false);
     }
