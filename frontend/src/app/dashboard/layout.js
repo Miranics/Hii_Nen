@@ -18,6 +18,11 @@ export default function DashboardLayout({ children }) {
           router.push('/login');
           return;
         }
+        console.log('🔍 Dashboard Layout - User data:', { 
+          id: currentUser.id, 
+          email: currentUser.email,
+          fullUser: currentUser 
+        });
         setUser(currentUser);
       } catch (error) {
         console.error('Auth check failed:', error);
