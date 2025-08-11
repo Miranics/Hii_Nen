@@ -23,6 +23,28 @@ export default function DashboardPage() {
   const refreshDataRef = useRef(refreshData);
   refreshDataRef.current = refreshData;
 
+  // Load cached insights on component mount
+  useEffect(() => {
+    const cachedInsights = sessionStorage.getItem('hiinen-ai-insights');
+    const cachedRecommendations = sessionStorage.getItem('hiinen-ai-recommendations');
+    
+    if (cachedInsights) {
+      try {
+        setAiInsights(JSON.parse(cachedInsights));
+      } catch (e) {
+        console.warn('Failed to parse cached insights');
+      }
+    }
+    
+    if (cachedRecommendations) {
+      try {
+        setAiRecommendations(JSON.parse(cachedRecommendations));
+      } catch (e) {
+        console.warn('Failed to parse cached recommendations');
+      }
+    }
+  }, []);
+
   // Get the current user for UI display
   useEffect(() => {
     async function getUser() {
@@ -70,6 +92,11 @@ export default function DashboardPage() {
       if (data?.success) {
         setAiInsights(data.insights || []);
         setAiRecommendations(data.recommendations || []);
+        
+        // Cache the results
+        sessionStorage.setItem('hiinen-ai-insights', JSON.stringify(data.insights || []));
+        sessionStorage.setItem('hiinen-ai-recommendations', JSON.stringify(data.recommendations || []));
+        
         console.log('✅ AI insights loaded successfully');
       } else {
         throw new Error('AI service returned error or no data');
@@ -78,7 +105,7 @@ export default function DashboardPage() {
       console.warn('⚠️ AI insights failed, using fallback:', error.message);
       
       // Fallback with real user data
-      setAiInsights([
+      const fallbackInsights = [
         {
           type: 'validation_progress', 
           title: 'Idea Validation Progress',
@@ -93,14 +120,21 @@ export default function DashboardPage() {
           color: stats.businessScore >= 70 ? 'green' : 'yellow',
           action: 'Improve Score'
         }
-      ]);
+      ];
       
-      setAiRecommendations([
+      const fallbackRecommendations = [
         `Validate ${Math.max(0, 5 - stats.ideasValidated)} more ideas to reach expert level`,
         'Connect with mentors in your industry',
         'Complete your business model canvas',
         'Research funding opportunities'
-      ]);
+      ];
+      
+      setAiInsights(fallbackInsights);
+      setAiRecommendations(fallbackRecommendations);
+      
+      // Cache fallback data too
+      sessionStorage.setItem('hiinen-ai-insights', JSON.stringify(fallbackInsights));
+      sessionStorage.setItem('hiinen-ai-recommendations', JSON.stringify(fallbackRecommendations));
     } finally {
       setInsightsLoading(false);
     }

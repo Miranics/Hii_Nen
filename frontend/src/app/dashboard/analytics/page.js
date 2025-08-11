@@ -50,11 +50,13 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     checkUser();
+  }, []); // Only run once on mount
+
+  useEffect(() => {
     if (user?.id) {
       loadUserProgress();
     }
-    // loadUserProgress is stable from context, safe to omit from deps
-  }, [user, loadUserProgress]);
+  }, [user?.id, loadUserProgress]); // Only when user ID changes
 
   const checkUser = async () => {
     try {

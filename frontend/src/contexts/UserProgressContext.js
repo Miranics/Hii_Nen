@@ -145,11 +145,15 @@ export const UserProgressProvider = ({ children, user }) => {
     }
   }, [user?.id, loadUserProgress]);
 
-  // Refresh data when window gains focus
+  // Refresh data when window gains focus (but not too frequently)
   useEffect(() => {
+    let lastRefresh = Date.now();
+    
     const handleFocus = () => {
-      if (user?.id) {
+      if (user?.id && Date.now() - lastRefresh > 30000) { // Only refresh if 30+ seconds since last refresh
+        console.log('🔄 Window focus - refreshing user data');
         loadUserProgress(true);
+        lastRefresh = Date.now();
       }
     };
 
