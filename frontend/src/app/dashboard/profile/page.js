@@ -21,8 +21,8 @@ export default function ProfilePage() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const currentUser = await getCurrentUser();
-        if (currentUser) {
+        const { user: currentUser, error } = await getCurrentUser();
+        if (currentUser && !error) {
           setUser(currentUser);
           setFormData({
             fullName: currentUser.user_metadata?.full_name || '',

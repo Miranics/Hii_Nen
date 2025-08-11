@@ -13,8 +13,9 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const currentUser = await getCurrentUser();
-        if (!currentUser) {
+        const { user: currentUser, error } = await getCurrentUser();
+        if (error || !currentUser) {
+          console.error('Auth error:', error);
           router.push('/login');
           return;
         }

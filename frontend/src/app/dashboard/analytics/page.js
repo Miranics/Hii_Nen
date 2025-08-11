@@ -58,7 +58,7 @@ export default function AnalyticsPage() {
 
   const checkUser = async () => {
     try {
-      const currentUser = await getCurrentUser();
+      const { user: currentUser, error } = await getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
       }

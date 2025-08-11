@@ -14,12 +14,6 @@ export const useUserProgress = () => {
 };
 
 export const UserProgressProvider = ({ children, user }) => {
-  console.log('🔍 UserProgressProvider received user:', { 
-    id: user?.id, 
-    email: user?.email,
-    hasUser: !!user 
-  });
-  
   const [userProgress, setUserProgress] = useState(null);
   const [validatedIdeas, setValidatedIdeas] = useState([]);
   const [stats, setStats] = useState({
@@ -153,11 +147,11 @@ export const UserProgressProvider = ({ children, user }) => {
         }
       };
       
-      console.log('💾 Saving idea to backend:', { newIdea, updateData, userId: user?.id });
+      console.log('💾 Saving idea to backend database...');
       
       // Check if user.id is available
       if (!user?.id) {
-        console.error('❌ User ID is undefined, cannot save to backend');
+        console.error('❌ User ID is required to save validated idea');
         throw new Error('User ID is required to save validated idea');
       }
       
@@ -184,7 +178,7 @@ export const UserProgressProvider = ({ children, user }) => {
       // If backend fails, still keep the local state update
       return false;
     }
-  }, [user?.id, validatedIdeas, stats]);
+  }, [user, validatedIdeas, stats]);
 
   // Load data when user changes
   useEffect(() => {

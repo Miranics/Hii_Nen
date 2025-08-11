@@ -22,8 +22,10 @@ export default function DashboardPage() {
   // Get the current user for UI display
   useEffect(() => {
     async function getUser() {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
+      const { user: currentUser, error } = await getCurrentUser();
+      if (currentUser && !error) {
+        setUser(currentUser);
+      }
     }
     getUser();
   }, []);
