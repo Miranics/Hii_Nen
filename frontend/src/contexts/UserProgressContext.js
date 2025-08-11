@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getUserProgress } from '@/lib/api';
+import { getUserProgress, updateUserProgress } from '@/lib/api';
 
 const UserProgressContext = createContext();
 
@@ -121,27 +121,55 @@ export const UserProgressProvider = ({ children, user }) => {
   }, [user?.id]);
 
   // Add a new validated idea
-  const addValidatedIdea = useCallback((ideaData) => {
+  const addValidatedIdea = useCallback(async (ideaData) => {
     const newIdea = {
       ...ideaData,
       id: Date.now(),
-      validatedAt: new Date().toISOString()
+      validatedAt: new Date().toISOString(),
+      stage: 'validated' // Ensure it has the validated stage
     };
     
-    // Update local state
-    setValidatedIdeas(prev => [...prev, newIdea]);
-    
-    // Update local storage
-    const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-    localIdeas.push(newIdea);
-    localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
-    
-    // Refresh stats
-    loadUserProgress(true);
-    
-    console.log('✅ Added new validated idea to context');
-    return true; // Return success
-  }, [loadUserProgress]);
+    try {
+      // Update local state immediately for responsiveness
+      setValidatedIdeas(prev => [...prev, newIdea]);
+      
+      // Save to backend database
+      const currentIdeas = [...validatedIdeas, newIdea];
+      const updateData = {
+        ideas: currentIdeas,
+        stats: {
+          ideasValidated: currentIdeas.length,
+          businessScore: Math.min(100, Math.round(currentIdeas.length * 15 + (newIdea.validationScore || 0) * 0.5)),
+          networkConnections: stats.networkConnections || 0,
+          fundingReadiness: Math.min(100, Math.round(currentIdeas.length * 20 + (newIdea.validationScore || 0) * 0.3))
+        }
+      };
+      
+      console.log('💾 Saving idea to backend:', { newIdea, updateData });
+      const result = await updateUserProgress(user.id, updateData);
+      
+      if (result.success) {
+        console.log('✅ Idea saved to backend successfully');
+        // Update stats with the new calculation
+        setStats(updateData.stats);
+      } else {
+        console.error('❌ Failed to save idea to backend:', result.error);
+      }
+      
+      // Also update local storage as fallback
+      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
+      localIdeas.push(newIdea);
+      localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
+      
+      console.log('✅ Added new validated idea to context');
+      return true; // Return success
+      
+    } catch (error) {
+      console.error('❌ Error saving validated idea:', error);
+      // If backend fails, still keep the local state update
+      return false;
+    }
+  }, [user?.id, validatedIdeas, stats]);
 
   // Load data when user changes
   useEffect(() => {
