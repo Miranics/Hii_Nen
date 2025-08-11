@@ -24,7 +24,7 @@ export const UserProgressProvider = ({ children, user }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Load data from both server and local storage
+  // Load data from server only
   const loadUserProgress = useCallback(async (forceRefresh = false) => {
     if (!user?.id) return;
     
@@ -32,7 +32,6 @@ export const UserProgressProvider = ({ children, user }) => {
     try {
       console.log('📊 Loading user progress for user:', user.id);
       
-      // Try to get data from server
       const result = await getUserProgress(user.id);
       
       if (result.success && result.data) {
@@ -45,76 +44,45 @@ export const UserProgressProvider = ({ children, user }) => {
         ) || [];
         
         console.log(`📈 Found ${serverIdeas.length} validated ideas:`, serverIdeas);
+        setValidatedIdeas(serverIdeas);
         
-        if (serverIdeas.length > 0) {
-          setValidatedIdeas(serverIdeas);
-          
-          // Calculate proper stats from server data
-          const avgScore = serverIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / serverIdeas.length;
-          const calculatedStats = {
-            ideasValidated: serverIdeas.length,
-            businessScore: Math.min(100, Math.round(serverIdeas.length * 15 + avgScore * 0.5)),
-            networkConnections: result.data.network?.peers?.length || 0,
-            fundingReadiness: Math.min(100, Math.round(serverIdeas.length * 20 + avgScore * 0.3))
-          };
-          
-          setStats(calculatedStats);
-          console.log('📊 Calculated stats:', calculatedStats);
-          
-          // Update local storage with server data
-          localStorage.setItem('validatedIdeas', JSON.stringify(serverIdeas));
-          return; // Use server data if available
-        } else {
-          console.log('⚠️ No validated ideas found in server data');
-        }
-      } else {
-        console.log('❌ Server request failed or no data:', result);
-      }
-      
-      // Fallback to local storage
-      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-      console.log(`📦 Local storage fallback: ${localIdeas.length} ideas`);
-      
-      if (localIdeas.length > 0 || forceRefresh) {
-        setValidatedIdeas(localIdeas);
-        
-        const localIdeasCount = localIdeas.length;
-        const avgScore = localIdeasCount > 0 
-          ? localIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / localIdeasCount
+        // Calculate stats from server data
+        const avgScore = serverIdeas.length > 0 
+          ? serverIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / serverIdeas.length
           : 0;
-        
-        const fallbackStats = {
-          ideasValidated: localIdeasCount,
-          businessScore: Math.min(100, Math.round(localIdeasCount * 15 + avgScore * 0.2)),
-          networkConnections: Math.floor(Math.random() * 10),
-          fundingReadiness: Math.min(100, Math.round(localIdeasCount * 20 + avgScore * 0.3))
+          
+        const calculatedStats = {
+          ideasValidated: serverIdeas.length,
+          businessScore: Math.min(100, Math.round(serverIdeas.length * 15 + avgScore * 0.5)),
+          networkConnections: result.data.network?.peers?.length || 0,
+          fundingReadiness: Math.min(100, Math.round(serverIdeas.length * 20 + avgScore * 0.3))
         };
         
-        setStats(fallbackStats);
-        console.log(`📦 Using local storage with stats:`, fallbackStats);
+        setStats(calculatedStats);
+        console.log('📊 Stats calculated:', calculatedStats);
+        
+      } else {
+        console.log('❌ Server request failed:', result);
+        // Set empty state if server fails
+        setValidatedIdeas([]);
+        setStats({
+          ideasValidated: 0,
+          businessScore: 0,
+          networkConnections: 0,
+          fundingReadiness: 0
+        });
       }
       
     } catch (error) {
       console.error('❌ Error loading user progress:', error);
-      
-      // Always fallback to local storage on error
-      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-      setValidatedIdeas(localIdeas);
-      
-      const localIdeasCount = localIdeas.length;
-      const avgScore = localIdeasCount > 0 
-        ? localIdeas.reduce((sum, idea) => sum + (idea.validationScore || 0), 0) / localIdeasCount
-        : 0;
-      
-      const errorStats = {
-        ideasValidated: localIdeasCount,
-        businessScore: Math.min(100, Math.round(localIdeasCount * 15 + avgScore * 0.2)),
-        networkConnections: Math.floor(Math.random() * 10),
-        fundingReadiness: Math.min(100, Math.round(localIdeasCount * 20 + avgScore * 0.3))
-      };
-      
-      setStats(errorStats);
-      console.log(`💾 Error fallback stats:`, errorStats);
+      // Set empty state on error
+      setValidatedIdeas([]);
+      setStats({
+        ideasValidated: 0,
+        businessScore: 0,
+        networkConnections: 0,
+        fundingReadiness: 0
+      });
     } finally {
       setLoading(false);
     }
@@ -128,10 +96,15 @@ export const UserProgressProvider = ({ children, user }) => {
       ...ideaData,
       id: Date.now(),
       validatedAt: new Date().toISOString(),
-      stage: 'validated' // Ensure it has the validated stage
+      stage: 'validated'
     };
     
     try {
+      if (!user?.id) {
+        console.error('❌ User ID is required to save validated idea');
+        throw new Error('User ID is required to save validated idea');
+      }
+      
       // Update local state immediately for responsiveness
       setValidatedIdeas(prev => [...prev, newIdea]);
       
@@ -148,46 +121,31 @@ export const UserProgressProvider = ({ children, user }) => {
       };
       
       console.log('💾 Saving idea to backend database...');
-      
-      // Check if user.id is available
-      if (!user?.id) {
-        console.error('❌ User ID is required to save validated idea');
-        throw new Error('User ID is required to save validated idea');
-      }
-      
       const result = await updateUserProgress(user.id, updateData);
       
       if (result.success) {
         console.log('✅ Idea saved to backend successfully');
-        // Update stats with the new calculation
         setStats(updateData.stats);
+        return true;
       } else {
         console.error('❌ Failed to save idea to backend:', result.error);
+        return false;
       }
-      
-      // Also update local storage as fallback
-      const localIdeas = JSON.parse(localStorage.getItem('validatedIdeas') || '[]');
-      localIdeas.push(newIdea);
-      localStorage.setItem('validatedIdeas', JSON.stringify(localIdeas));
-      
-      console.log('✅ Added new validated idea to context');
-      return true; // Return success
       
     } catch (error) {
       console.error('❌ Error saving validated idea:', error);
-      // If backend fails, still keep the local state update
       return false;
     }
   }, [user, validatedIdeas, stats]);
 
-  // Load data when user changes (only once per user)
+  // Load data when user changes
   useEffect(() => {
     if (user?.id) {
       loadUserProgress();
     }
-  }, [user?.id]); // Remove loadUserProgress from dependencies
+  }, [user?.id, loadUserProgress]);
 
-  // Refresh data when window gains focus (user comes back to the app)
+  // Refresh data when window gains focus
   useEffect(() => {
     const handleFocus = () => {
       if (user?.id) {
@@ -197,7 +155,7 @@ export const UserProgressProvider = ({ children, user }) => {
 
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
-  }, [user?.id]); // Remove loadUserProgress from dependencies
+  }, [user?.id, loadUserProgress]);
 
   const value = {
     userProgress,

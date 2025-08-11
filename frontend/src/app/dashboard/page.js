@@ -36,12 +36,22 @@ export default function DashboardPage() {
       console.log('🔄 User loaded, refreshing dashboard data for:', user.id);
       refreshData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps  
   }, [user?.id]); // Remove refreshData from dependencies
 
   const fetchAIInsights = useCallback(async () => {
+    if (!user || insightsLoading) return; // Prevent multiple simultaneous calls
+    
     setInsightsLoading(true);
     try {
-      const data = await callHiiNenAI(API_CONFIG.ENDPOINTS.AI_INSIGHTS, {
+      console.log('🤖 Fetching AI insights for user:', user.id);
+      
+      // Add timeout to prevent long loading times
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AI insights timeout after 10 seconds')), 10000)
+      );
+      
+      const dataPromise = callHiiNenAI(API_CONFIG.ENDPOINTS.AI_INSIGHTS, {
         userProfile: {
           email: user?.email,
           metadata: user?.user_metadata,
@@ -51,55 +61,51 @@ export default function DashboardPage() {
         requestType: 'dashboard_insights'
       });
       
-      if (data.success) {
+      const data = await Promise.race([dataPromise, timeoutPromise]);
+      
+      if (data?.success) {
         setAiInsights(data.insights || []);
         setAiRecommendations(data.recommendations || []);
+        console.log('✅ AI insights loaded successfully');
       } else {
-        // Fallback with real user data
-        setAiInsights([
-          {
-            type: 'validation_progress',
-            title: 'Idea Validation Progress',
-            message: `You've validated ${stats.ideasValidated} ideas with an average score of ${validatedIdeas.length > 0 ? Math.round(validatedIdeas.reduce((sum, idea) => sum + idea.validationScore, 0) / validatedIdeas.length) : 0}%. Keep building your portfolio!`,
-            color: 'blue',
-            action: 'Validate More'
-          },
-          {
-            type: 'business_score',
-            title: 'Business Health Score',
-            message: `Your current business score is ${stats.businessScore}%. ${stats.businessScore >= 70 ? 'Excellent progress!' : 'Focus on validation and market research to improve.'}`,
-            color: stats.businessScore >= 70 ? 'green' : 'yellow',
-            action: 'Improve Score'
-          }
-        ]);
-        setAiRecommendations([
-          `Validate ${Math.max(0, 5 - stats.ideasValidated)} more ideas to reach expert level`,
-          'Connect with mentors in your industry',
-          'Complete your business model canvas',
-          'Research funding opportunities'
-        ]);
+        throw new Error('AI service returned error or no data');
       }
     } catch (error) {
-      console.error('Error fetching AI insights:', error);
-      // Use fallback with real data
+      console.warn('⚠️ AI insights failed, using fallback:', error.message);
+      // Fallback with real user data
       setAiInsights([
         {
-          type: 'welcome',
-          title: 'Welcome to HiiNen',
-          message: `${user?.user_metadata?.full_name || user?.email?.split('@')[0]}, start your entrepreneurial journey by validating your first business idea!`,
+          type: 'validation_progress',
+          title: 'Idea Validation Progress',
+          message: `You've validated ${stats.ideasValidated} ideas with an average score of ${validatedIdeas.length > 0 ? Math.round(validatedIdeas.reduce((sum, idea) => sum + idea.validationScore, 0) / validatedIdeas.length) : 0}%. Keep building your portfolio!`,
           color: 'blue',
-          action: 'Get Started'
+          action: 'Validate More'
+        },
+        {
+          type: 'business_score',
+          title: 'Business Health Score',
+          message: `Your current business score is ${stats.businessScore}%. ${stats.businessScore >= 70 ? 'Excellent progress!' : 'Focus on validation and market research to improve.'}`,
+          color: stats.businessScore >= 70 ? 'green' : 'yellow',
+          action: 'Improve Score'
         }
       ]);
+      setAiRecommendations([
+        `Validate ${Math.max(0, 5 - stats.ideasValidated)} more ideas to reach expert level`,
+        'Connect with mentors in your industry',
+        'Complete your business model canvas',
+        'Research funding opportunities'
+      ]);
+    } finally {
+      setInsightsLoading(false);
     }
-    setInsightsLoading(false);
-  }, [user]); // Only depend on user to prevent constant re-renders
+  }, [user, insightsLoading, stats, userProgress, validatedIdeas]); // Include all dependencies
 
   useEffect(() => {
     if (user) {
       fetchAIInsights();
     }
-  }, [user]); // Remove fetchAIInsights from dependencies to prevent loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]); // Only depend on user to prevent infinite loops
 
   // Refresh data when coming back to dashboard
   useEffect(() => {
@@ -111,6 +117,7 @@ export default function DashboardPage() {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]); // Remove refreshData from dependencies
 
   const handleCompleteGoal = async (goalId) => {

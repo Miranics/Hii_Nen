@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .chat-box { border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; margin: 10px 0; }
+        .input-group { display: flex; gap: 10px; margin: 10px 0; }
+        input { flex: 1; padding: 8px; }
+        button { padding: 8px 16px; }
+        .message { margin: 5px 0; padding: 5px; border-radius: 5px; }
+        .user { background: #e3f2fd; text-align: right; }
+        .ai { background: #f3e5f5; }
+        .error { background: #ffebee; color: #c62828; }
+        .loading { color: #666; font-style: italic; }
+        .status { margin: 10px 0; font-weight: bold; }
+        .online { color: green; }
+        .offline { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HiiNen AI Chat Test</h1>
+        
+        <div class="status">
+            Backend Status: <span id="status">Checking...</span>
+        </div>
+        
+        <div class="chat-box" id="chatBox"></div>
+        
+        <div class="input-group">
+            <input type="text" id="messageInput" placeholder="Type your message here..." />
+            <button onclick="sendMessage()">Send</button>
+            <button onclick="checkHealth()">Check Health</button>
+        </div>
+        
+        <div>
+            <h3>Quick Tests:</h3>
+            <button onclick="testMessage('Hello HiiNen AI')">Hello HiiNen</button>
+            <button onclick="testMessage('Help me validate a business idea')">Business Idea</button>
+            <button onclick="testMessage('What funding options should I consider?')">Funding Options</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        
+        function addMessage(sender, message, isError = false) {
+            const chatBox = document.getElementById('chatBox');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}${isError ? ' error' : ''}`;
+            messageDiv.innerHTML = `<strong>${sender.toUpperCase()}:</strong> ${message}`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        async function checkHealth() {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = 'Checking...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    statusEl.textContent = 'Online';
+                    statusEl.className = 'online';
+                    addMessage('system', `Health check: ${JSON.stringify(data)}`);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusEl.textContent = 'Offline';
+                statusEl.className = 'offline';
+                addMessage('system', `Health check failed: ${error.message}`, true);
+            }
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            input.value = '';
+            addMessage('user', message);
+            addMessage('system', 'Sending to AI...', false);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/ai/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversationHistory: [],
+                        userContext: {
+                            name: 'Test User',
+                            email: 'test@example.com'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage('ai', data.response);
+                    document.getElementById('status').textContent = 'Online';
+                    document.getElementById('status').className = 'online';
+                } else {
+                    addMessage('ai', `Error: ${data.error}`, true);
+                }
+            } catch (error) {
+                addMessage('ai', `Connection error: ${error.message}`, true);
+                document.getElementById('status').textContent = 'Offline';
+                document.getElementById('status').className = 'offline';
+            }
+        }
+        
+        function testMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+        
+        // Handle Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Initial health check
+        checkHealth();
+        
+        // Add welcome message
+        addMessage('system', 'AI Chat Test loaded. Check backend status and try sending messages.');
+    </script>
+</body>
+</html>
