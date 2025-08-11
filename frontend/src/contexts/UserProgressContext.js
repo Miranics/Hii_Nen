@@ -180,12 +180,12 @@ export const UserProgressProvider = ({ children, user }) => {
     }
   }, [user, validatedIdeas, stats]);
 
-  // Load data when user changes
+  // Load data when user changes (only once per user)
   useEffect(() => {
     if (user?.id) {
       loadUserProgress();
     }
-  }, [user?.id, loadUserProgress]);
+  }, [user?.id]); // Remove loadUserProgress from dependencies
 
   // Refresh data when window gains focus (user comes back to the app)
   useEffect(() => {
@@ -197,7 +197,7 @@ export const UserProgressProvider = ({ children, user }) => {
 
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
-  }, [user?.id, loadUserProgress]);
+  }, [user?.id]); // Remove loadUserProgress from dependencies
 
   const value = {
     userProgress,

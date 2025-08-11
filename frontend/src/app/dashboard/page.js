@@ -30,13 +30,13 @@ export default function DashboardPage() {
     getUser();
   }, []);
 
-  // Refresh user progress data when user is loaded
+  // Refresh user progress data when user is loaded (only once per user)
   useEffect(() => {
     if (user?.id) {
       console.log('🔄 User loaded, refreshing dashboard data for:', user.id);
       refreshData();
     }
-  }, [user?.id, refreshData]);
+  }, [user?.id]); // Remove refreshData from dependencies
 
   const fetchAIInsights = useCallback(async () => {
     setInsightsLoading(true);
@@ -93,13 +93,13 @@ export default function DashboardPage() {
       ]);
     }
     setInsightsLoading(false);
-  }, [user, stats, userProgress, validatedIdeas]);
+  }, [user]); // Only depend on user to prevent constant re-renders
 
   useEffect(() => {
     if (user) {
       fetchAIInsights();
     }
-  }, [user, fetchAIInsights]);
+  }, [user]); // Remove fetchAIInsights from dependencies to prevent loop
 
   // Refresh data when coming back to dashboard
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function DashboardPage() {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [user, refreshData]);
+  }, [user]); // Remove refreshData from dependencies
 
   const handleCompleteGoal = async (goalId) => {
     if (!user?.id || !goalId) return;
