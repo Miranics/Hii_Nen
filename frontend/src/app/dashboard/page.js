@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -19,6 +19,10 @@ export default function DashboardPage() {
   const { userProgress, validatedIdeas, stats, loading: progressLoading, refreshData } = useUserProgress();
   const router = useRouter();
 
+  // Use ref to avoid refreshData dependency issues
+  const refreshDataRef = useRef(refreshData);
+  refreshDataRef.current = refreshData;
+
   // Get the current user for UI display
   useEffect(() => {
     async function getUser() {
@@ -34,23 +38,19 @@ export default function DashboardPage() {
   useEffect(() => {
     if (user?.id) {
       console.log('🔄 User loaded, refreshing dashboard data for:', user.id);
-      refreshData();
+      refreshDataRef.current();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps  
-  }, [user?.id]); // Remove refreshData from dependencies
+  }, [user?.id]);
 
   const fetchAIInsights = useCallback(async () => {
-    if (!user || insightsLoading) return; // Prevent multiple simultaneous calls
+    if (!user || !stats) return;
+    
+    console.log('🤖 Fetching AI insights for user:', user.id, 'with stats:', stats);
     
     setInsightsLoading(true);
+    
     try {
-      console.log('🤖 Fetching AI insights for user:', user.id);
-      
-      // Add timeout to prevent long loading times
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('AI insights timeout after 10 seconds')), 10000)
-      );
-      
+      // Try to get real AI insights first with a short timeout
       const dataPromise = callHiiNenAI(API_CONFIG.ENDPOINTS.AI_INSIGHTS, {
         userProfile: {
           email: user?.email,
@@ -60,6 +60,10 @@ export default function DashboardPage() {
         },
         requestType: 'dashboard_insights'
       });
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AI insights timeout after 8 seconds')), 8000)
+      );
       
       const data = await Promise.race([dataPromise, timeoutPromise]);
       
@@ -72,23 +76,25 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.warn('⚠️ AI insights failed, using fallback:', error.message);
+      
       // Fallback with real user data
       setAiInsights([
         {
-          type: 'validation_progress',
+          type: 'validation_progress', 
           title: 'Idea Validation Progress',
-          message: `You've validated ${stats.ideasValidated} ideas with an average score of ${validatedIdeas.length > 0 ? Math.round(validatedIdeas.reduce((sum, idea) => sum + idea.validationScore, 0) / validatedIdeas.length) : 0}%. Keep building your portfolio!`,
+          message: `You've validated ${stats.ideasValidated} ideas. Keep building your portfolio!`,
           color: 'blue',
           action: 'Validate More'
         },
         {
           type: 'business_score',
-          title: 'Business Health Score',
+          title: 'Business Health Score', 
           message: `Your current business score is ${stats.businessScore}%. ${stats.businessScore >= 70 ? 'Excellent progress!' : 'Focus on validation and market research to improve.'}`,
           color: stats.businessScore >= 70 ? 'green' : 'yellow',
           action: 'Improve Score'
         }
       ]);
+      
       setAiRecommendations([
         `Validate ${Math.max(0, 5 - stats.ideasValidated)} more ideas to reach expert level`,
         'Connect with mentors in your industry',
@@ -98,28 +104,26 @@ export default function DashboardPage() {
     } finally {
       setInsightsLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]); // Only depend on user ID to prevent recreation
+  }, [user, stats, userProgress]); // Include userProgress for AI context
 
   useEffect(() => {
-    if (user) {
+    // Only run when we have both user and stats data, and stats are not default values
+    if (user && stats && stats.ideasValidated !== undefined && !progressLoading) {
       fetchAIInsights();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]); // Only depend on user to prevent infinite loops
+  }, [user, stats, fetchAIInsights, progressLoading]);
 
   // Refresh data when coming back to dashboard
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && user) {
-        refreshData();
+        refreshDataRef.current();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]); // Remove refreshData from dependencies
+  }, [user]);
 
   const handleCompleteGoal = async (goalId) => {
     if (!user?.id || !goalId) return;
@@ -128,7 +132,7 @@ export default function DashboardPage() {
       const result = await completeUserGoal(user.id, goalId);
       if (result.success) {
         // Refresh user progress to reflect the completed goal
-        refreshData();
+        refreshDataRef.current();
       }
     } catch (error) {
       console.error('Error completing goal:', error);
