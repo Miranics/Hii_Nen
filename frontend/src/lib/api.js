@@ -14,7 +14,7 @@ export const API_CONFIG = {
     USER_PROGRESS_GOALS: '/api/user-progress/goals',
     USER_PROGRESS_AI_INTERACTION: '/api/user-progress/ai-interaction'
   },
-  TIMEOUT: 30000,
+  TIMEOUT: 15000, // Reduced from 30000 to 15000 (15 seconds)
   MAX_RETRIES: 3
 };
 
@@ -33,15 +33,15 @@ export const getApiUrl = (endpoint) => {
 // Enhanced health check with retry logic
 export const checkBackendHealth = async () => {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
-    const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.HEALTH), {
-      signal: controller.signal,
+    const fetchPromise = fetch(getApiUrl(API_CONFIG.ENDPOINTS.HEALTH), {
       headers: { 'Accept': 'application/json' }
     });
     
-    clearTimeout(timeoutId);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Health check timeout')), 10000)
+    );
+    
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
     return response.ok;
   } catch (error) {
     console.warn('Backend health check failed:', error.message);
@@ -56,34 +56,34 @@ export const callHiiNenAI = async (endpoint, data, retries = API_CONFIG.MAX_RETR
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      // Wake up Render service on first attempt
+      // Wake up Render service on first attempt (simpler approach)
       if (attempt === 0 && API_CONFIG.BASE_URL.includes('render.com')) {
         console.log('🔄 Waking up Render service...');
         try {
           await fetch(getApiUrl('/api/health'), { 
-            method: 'HEAD',
-            signal: AbortSignal.timeout(5000)
+            method: 'HEAD'
           });
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Shorter wait
         } catch (wakeupError) {
           console.log('⚠️ Service wakeup skipped');
         }
       }
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
-
-      const response = await fetch(fullUrl, {
+      // Use Promise.race for timeout instead of AbortController
+      const fetchPromise = fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(data),
-        signal: controller.signal
+        body: JSON.stringify(data)
       });
 
-      clearTimeout(timeoutId);
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), API_CONFIG.TIMEOUT)
+      );
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -106,6 +106,10 @@ export const callHiiNenAI = async (endpoint, data, retries = API_CONFIG.MAX_RETR
         };
       }
       
+      // Wait before retry
+      if (attempt < retries) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+      }
     }
   }
 };
@@ -115,18 +119,18 @@ export const callHiiNenAI = async (endpoint, data, retries = API_CONFIG.MAX_RETR
 // Get user's personalized dashboard data
 export const getUserProgress = async (userId) => {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
-    const response = await fetch(getApiUrl(`${API_CONFIG.ENDPOINTS.USER_PROGRESS}?userId=${userId}`), {
-      signal: controller.signal,
+    const fetchPromise = fetch(getApiUrl(`${API_CONFIG.ENDPOINTS.USER_PROGRESS}?userId=${userId}`), {
       headers: { 
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }
     });
     
-    clearTimeout(timeoutId);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Request timeout')), 10000)
+    );
+    
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);

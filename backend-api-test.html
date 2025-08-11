@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>HiiNen Backend API Test</h1>
+    
+    <div>
+        <button onclick="testHealth()">Test Health</button>
+        <button onclick="testAIChat()">Test AI Chat</button>
+        <button onclick="testAIInsights()">Test AI Insights</button>
+        <button onclick="testUserProgress()">Test User Progress</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'https://hiinen-backend.onrender.com';
+        
+        function addResult(test, status, message, data = null) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `
+                <strong>${test}:</strong> ${message}
+                ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}
+            `;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        async function testHealth() {
+            addResult('Health Check', 'loading', 'Testing...');
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                addResult('Health Check', 'success', `Status: ${response.status}`, data);
+            } catch (error) {
+                addResult('Health Check', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        async function testAIChat() {
+            addResult('AI Chat', 'loading', 'Testing...');
+            try {
+                const response = await fetch(`${API_BASE}/api/ai/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Hello, can you help me with business planning?',
+                        conversationHistory: [],
+                        userContext: {
+                            name: 'Test User',
+                            email: 'test@example.com'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                addResult('AI Chat', response.ok ? 'success' : 'error', 
+                         `Status: ${response.status}`, data);
+            } catch (error) {
+                addResult('AI Chat', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        async function testAIInsights() {
+            addResult('AI Insights', 'loading', 'Testing...');
+            try {
+                const response = await fetch(`${API_BASE}/api/ai/insights`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userProfile: {
+                            email: 'test@example.com',
+                            stats: { ideasValidated: 1, businessScore: 45 }
+                        },
+                        requestType: 'dashboard_insights'
+                    })
+                });
+                
+                const data = await response.json();
+                addResult('AI Insights', response.ok ? 'success' : 'error', 
+                         `Status: ${response.status}`, data);
+            } catch (error) {
+                addResult('AI Insights', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        async function testUserProgress() {
+            addResult('User Progress', 'loading', 'Testing...');
+            try {
+                const testUserId = '3487a037-5f56-4460-9f1b-b9f8450f5099'; // Your user ID
+                const response = await fetch(`${API_BASE}/api/user-progress?userId=${testUserId}`);
+                
+                const data = await response.json();
+                addResult('User Progress', response.ok ? 'success' : 'error', 
+                         `Status: ${response.status}`, data);
+            } catch (error) {
+                addResult('User Progress', 'error', `Error: ${error.message}`);
+            }
+        }
+        
+        // Auto-run health check on load
+        testHealth();
+    </script>
+</body>
+</html>

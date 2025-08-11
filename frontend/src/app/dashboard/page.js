@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, u      // Simple timeout to prevent long loading times
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AI insights timeout after 8 seconds')), 8000)
+      );llback } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -98,7 +101,7 @@ export default function DashboardPage() {
     } finally {
       setInsightsLoading(false);
     }
-  }, [user, insightsLoading, stats, userProgress, validatedIdeas]); // Include all dependencies
+  }, [user?.id]); // Only depend on user ID to prevent recreation
 
   useEffect(() => {
     if (user) {
