@@ -28,6 +28,14 @@ export default function DashboardPage() {
     getUser();
   }, []);
 
+  // Refresh user progress data when user is loaded
+  useEffect(() => {
+    if (user?.id) {
+      console.log('🔄 User loaded, refreshing dashboard data for:', user.id);
+      refreshData();
+    }
+  }, [user?.id, refreshData]);
+
   const fetchAIInsights = useCallback(async () => {
     setInsightsLoading(true);
     try {
