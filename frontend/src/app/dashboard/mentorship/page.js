@@ -24,6 +24,38 @@ export default function MentorshipPage() {
     "What legal structure should I choose?"
   ];
 
+  // Intelligent fallback responses for when AI is down
+  const getFallbackResponse = (message) => {
+    const lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.includes('validate') || lowerMessage.includes('idea')) {
+      return "Great question about idea validation! Here's what I'd recommend: 1) Talk to 10-20 potential customers to understand their pain points, 2) Research your competitors and identify gaps, 3) Create a simple landing page to test interest, 4) Build a minimal prototype to test core assumptions. Would you like me to dive deeper into any of these steps when I'm back online?";
+    }
+    
+    if (lowerMessage.includes('mvp') || lowerMessage.includes('minimum viable')) {
+      return "For your MVP, focus on solving ONE core problem really well. Include only the essential features that prove your value proposition. Think: What's the smallest version that would make early customers say 'This solves my problem'? Start with manual processes where possible - you can automate later. Remember: MVP = Maximum learning, minimum effort.";
+    }
+    
+    if (lowerMessage.includes('funding') || lowerMessage.includes('investor')) {
+      return "Funding advice: Before seeking investors, validate your idea with customers and achieve some early traction. For African startups, consider: 1) Bootstrapping with revenue, 2) Local angel networks, 3) Pan-African VCs like EchoVC, TLcom, 4) International funds focusing on Africa. Have solid financials and a clear growth plan ready.";
+    }
+    
+    if (lowerMessage.includes('team') || lowerMessage.includes('co-founder')) {
+      return "Building a founding team: Look for complementary skills - technical, business, domain expertise. Find people who share your vision and work ethic. Consider co-founders from your network, accelerators, or startup events. In Africa, local market knowledge is crucial, so prioritize that alongside technical skills.";
+    }
+    
+    if (lowerMessage.includes('market') || lowerMessage.includes('customer')) {
+      return "Finding your target market in Africa requires understanding local contexts. Start with one country/region, talk directly to potential users, leverage mobile-first approaches, and consider local payment methods and infrastructure. Use social media, local partnerships, and community engagement to reach customers cost-effectively.";
+    }
+    
+    if (lowerMessage.includes('legal') || lowerMessage.includes('structure')) {
+      return "For legal structure in Africa: Consider your primary market first. Popular options include Ltd companies in Nigeria, Pty Ltd in South Africa, or incorporating in startup-friendly jurisdictions like Mauritius. Consult local legal experts familiar with startup needs in your target market.";
+    }
+    
+    // Default fallback
+    return `That's a great question about ${message.includes('?') ? 'startup strategy' : 'entrepreneurship'}! I'm currently experiencing connection issues, but I'm designed to help with business strategy, market validation, funding, team building, and African market insights. Let me get back to you with detailed guidance once I'm fully connected. In the meantime, remember: focus on solving real customer problems and validate early and often!`;
+  };
+
   const handleSendMessage = async (message = newMessage) => {
     if (!message.trim()) return;
 
@@ -59,10 +91,11 @@ export default function MentorshipPage() {
       }
     } catch (error) {
       console.error('Mentorship chat error:', error);
-      // Fallback response
+      
+      // Intelligent fallback response based on message content
       const aiMessage = {
         role: 'assistant',
-        content: "I'm having trouble connecting right now, but I'm here to help! As your AI co-founder, I can assist with business strategy, funding advice, market validation, and more. Try asking me again in a moment, or check if the backend server is running.",
+        content: getFallbackResponse(message),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);

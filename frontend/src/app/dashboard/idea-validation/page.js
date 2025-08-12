@@ -56,6 +56,74 @@ export default function IdeaValidationPage() {
     }
   }, [user, loadUserProgress]);
 
+  // Intelligent fallback validation based on idea content
+  const generateIntelligentValidation = (ideaData) => {
+    const idea = ideaData.description.toLowerCase();
+    const market = ideaData.targetMarket.toLowerCase();
+    const problem = ideaData.problem.toLowerCase();
+    
+    let baseScore = 70;
+    const strengths = [];
+    const concerns = [];
+    const recommendations = [];
+    
+    // Analyze idea content for scoring
+    if (idea.includes('mobile') || idea.includes('app')) {
+      baseScore += 5;
+      strengths.push('Mobile-first approach aligns with African market trends');
+    }
+    
+    if (idea.includes('save') || idea.includes('saving') || idea.includes('money')) {
+      baseScore += 8;
+      strengths.push('Addresses critical financial inclusion needs in Africa');
+    }
+    
+    if (idea.includes('farm') || idea.includes('agriculture') || idea.includes('rural')) {
+      baseScore += 10;
+      strengths.push('Targets large agricultural sector with significant impact potential');
+    }
+    
+    if (idea.includes('solar') || idea.includes('energy') || idea.includes('power')) {
+      baseScore += 7;
+      strengths.push('Addresses critical infrastructure challenges in African markets');
+    }
+    
+    if (idea.includes('skill') || idea.includes('education') || idea.includes('training')) {
+      baseScore += 6;
+      strengths.push('Addresses youth employment and skills development needs');
+    }
+    
+    if (market.includes('kenya') || market.includes('nigeria') || market.includes('ghana')) {
+      baseScore += 5;
+      strengths.push('Targets major African market with strong digital adoption');
+    }
+    
+    if (market.includes('small business') || market.includes('sme')) {
+      baseScore += 4;
+      strengths.push('SME market has significant growth potential and unmet needs');
+    }
+    
+    // Add standard concerns and recommendations
+    concerns.push('Market competition analysis needed for sustainable differentiation');
+    concerns.push('Customer acquisition costs require careful planning and validation');
+    concerns.push('Regulatory compliance and local market dynamics need investigation');
+    
+    recommendations.push('Conduct interviews with 20-30 potential customers to validate assumptions');
+    recommendations.push('Research local competitors and identify key differentiating factors');
+    recommendations.push('Create a basic prototype or landing page to test market interest');
+    recommendations.push('Develop partnerships with local organizations for market entry');
+    
+    // Ensure score is in realistic range
+    baseScore = Math.min(Math.max(baseScore, 60), 95);
+    
+    return {
+      score: baseScore,
+      strengths: strengths.slice(0, 3), // Top 3 strengths
+      concerns: concerns,
+      recommendations: recommendations
+    };
+  };
+
   const handleValidation = async (e) => {
     e.preventDefault();
     
@@ -120,32 +188,14 @@ export default function IdeaValidationPage() {
             };
           }
         } catch (parseError) {
-          console.log('Could not parse AI response as JSON, using fallback');
+          console.log('Could not parse AI response as JSON, using intelligent fallback');
         }
       }
 
-      // Fallback validation results if AI parsing fails
+      // Use intelligent fallback if AI parsing fails or AI is down
       if (!validationResults) {
-        const score = Math.floor(Math.random() * 30) + 60;
-        validationResults = {
-          score,
-          strengths: [
-            'Innovative approach to solving real problems',
-            'Clear understanding of target market needs',
-            'Strong potential for market impact'
-          ],
-          concerns: [
-            'Market competition analysis needed',
-            'Customer validation recommended',
-            'Financial projections require development'
-          ],
-          recommendations: [
-            'Conduct market research with 50+ potential customers',
-            'Develop a minimum viable product (MVP)',
-            'Create detailed competitive analysis',
-            'Build financial projections and business model'
-          ]
-        };
+        console.log('🧠 Using intelligent validation analysis...');
+        validationResults = generateIntelligentValidation(ideaData);
       }
 
       setResults(validationResults);
@@ -176,27 +226,17 @@ export default function IdeaValidationPage() {
     } catch (error) {
       console.error('Idea validation error:', error);
       
-      // Fallback results on error
-      const score = Math.floor(Math.random() * 25) + 60;
-      setResults({
-        score,
-        strengths: [
-          'HiiNen AI is analyzing your idea',
-          'Strong potential in the market',
-          'Innovative approach detected'
-        ],
-        concerns: [
-          'Market competition analysis needed',
-          'Customer validation recommended',
-          'Financial projections require review'
-        ],
-        recommendations: [
-          'Connect with HiiNen AI for detailed analysis',
-          'Conduct market research with target customers',
-          'Develop a comprehensive business plan',
-          'Consider competitive positioning strategy'
-        ]
-      });
+      // Use intelligent fallback on complete error
+      const ideaData = {
+        description: idea,
+        targetMarket,
+        problem,
+        solution
+      };
+      
+      console.log('🧠 Using intelligent validation analysis due to error...');
+      const validationResults = generateIntelligentValidation(ideaData);
+      setResults(validationResults);
     }
 
     setLoading(false);
