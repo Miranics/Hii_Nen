@@ -40,7 +40,7 @@ if (process.env.NODE_ENV !== 'production') {
   console.log('🚀 Rate limiting disabled for production');
 }
 
-// CORS configuration - Updated for production
+// CORS configuration - Enhanced for development and testing
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5500',
@@ -50,7 +50,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// Also allow any vercel app deployment
+// Enhanced origin checking for development
 const isVercelDomain = (origin) => {
   return origin && (
     origin.endsWith('.vercel.app') || 
@@ -59,13 +59,34 @@ const isVercelDomain = (origin) => {
   );
 };
 
+const isDevelopmentOrigin = (origin) => {
+  if (!origin) return true; // No origin (null) - allow for local files and apps
+  
+  return (
+    origin.startsWith('http://localhost') ||
+    origin.startsWith('http://127.0.0.1') ||
+    origin.startsWith('file://') ||
+    origin === 'null' // Explicit null origin check
+  );
+};
+
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like mobile apps, curl requests, or local file testing)
+    if (!origin) {
+      console.log('✅ CORS allowed: no origin (likely local file or mobile app)');
+      return callback(null, true);
+    }
     
+    // Check allowed origins
     if (allowedOrigins.includes(origin) || isVercelDomain(origin)) {
       console.log('✅ CORS allowed origin:', origin);
+      return callback(null, true);
+    }
+    
+    // Allow development origins (localhost, file://, etc.)
+    if (isDevelopmentOrigin(origin)) {
+      console.log('✅ CORS allowed development origin:', origin);
       return callback(null, true);
     }
     
@@ -95,7 +116,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Handle preflight requests explicitly
 app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  const origin = req.headers.origin;
+  
+  // Set CORS headers for preflight
+  if (!origin || isDevelopmentOrigin(origin) || allowedOrigins.includes(origin) || isVercelDomain(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS,HEAD');
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With,Cache-Control,Accept,Origin,User-Agent,DNT,Accept-Encoding,Accept-Language,Connection');
   res.header('Access-Control-Allow-Credentials', 'true');
