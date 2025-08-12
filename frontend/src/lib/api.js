@@ -31,33 +31,65 @@ export const getApiUrl = (endpoint) => {
   return `${API_CONFIG.BASE_URL}${endpoint}`;
 };
 
-// Aggressive service wakeup function
+// Enhanced service wakeup with multiple strategies
 const wakeupService = async () => {
-  console.log('🔄 Attempting aggressive service wakeup...');
+  console.log('🔄 Attempting enhanced service wakeup...');
   
+  // Strategy 1: Multiple concurrent wakeup calls
   const wakeupPromises = [
-    fetch(getApiUrl(API_CONFIG.ENDPOINTS.HEALTH), { 
-      method: 'HEAD',
-      headers: { 'Cache-Control': 'no-cache' }
-    }),
+    // Simple GET to health endpoint
     fetch(getApiUrl(API_CONFIG.ENDPOINTS.HEALTH), { 
       method: 'GET',
-      headers: { 'Cache-Control': 'no-cache' }
-    })
+      headers: { 
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+      }
+    }).catch(() => null),
+    
+    // POST to a lightweight endpoint to fully wake the service
+    fetch(getApiUrl('/api/health'), { 
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache'
+      },
+      body: JSON.stringify({ wakeup: true, timestamp: Date.now() })
+    }).catch(() => null)
   ];
   
   try {
-    await Promise.race([
-      Promise.allSettled(wakeupPromises),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Wakeup timeout')), API_CONFIG.WAKEUP_TIMEOUT)
-      )
-    ]);
+    console.log('📡 Sending wakeup signals...');
+    const results = await Promise.allSettled(wakeupPromises);
     
-    // Give service time to fully wake up
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('✅ Service wakeup completed');
-    return true;
+    // Check if any wakeup call succeeded
+    const successful = results.some(result => 
+      result.status === 'fulfilled' && 
+      result.value && 
+      result.value.ok
+    );
+    
+    if (successful) {
+      console.log('✅ Initial wakeup successful, waiting for full initialization...');
+      // Wait longer for full service initialization
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Verify service is actually ready with a test call
+      const testResponse = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.HEALTH), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      }).catch(() => null);
+      
+      if (testResponse && testResponse.ok) {
+        console.log('✅ Service fully awake and responding');
+        return true;
+      }
+    }
+    
+    console.warn('⚠️ Service wakeup may have failed, continuing anyway...');
+    return false;
+    
   } catch (error) {
     console.warn('⚠️ Service wakeup failed:', error.message);
     return false;
@@ -86,37 +118,49 @@ export const checkBackendHealth = async () => {
   }
 };
 
-// Enhanced API call function with better error handling and aggressive wakeup
+// Enhanced API call function with connection recovery
 export const callHiiNenAI = async (endpoint, data, retries = API_CONFIG.MAX_RETRIES) => {
   const fullUrl = getApiUrl(endpoint);
   console.log('🚀 API Call:', fullUrl);
   
-  // Always attempt wakeup on first try for Render services
+  // Always attempt enhanced wakeup for Render services
   if (API_CONFIG.BASE_URL.includes('render.com')) {
+    console.log('🔄 Pre-warming Render service...');
     await wakeupService();
   }
   
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      // Use fetch with timeout
-      const fetchPromise = fetch(fullUrl, {
+      console.log(`📡 Attempt ${attempt + 1}/${retries + 1}: Sending request...`);
+      
+      // Create request with enhanced headers
+      const requestOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+          'User-Agent': 'HiiNen-Frontend/1.0'
         },
-        body: JSON.stringify(data)
-      });
+        body: JSON.stringify({
+          ...data,
+          timestamp: Date.now(),
+          attempt: attempt + 1
+        })
+      };
 
+      // Use fetch with enhanced timeout handling
+      const fetchPromise = fetch(fullUrl, requestOptions);
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Request timeout')), API_CONFIG.TIMEOUT)
       );
 
       const response = await Promise.race([fetchPromise, timeoutPromise]);
 
+      // Check response status
       if (!response.ok) {
-        const errorText = await response.text();
+        const errorText = await response.text().catch(() => 'Unknown error');
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
@@ -127,23 +171,28 @@ export const callHiiNenAI = async (endpoint, data, retries = API_CONFIG.MAX_RETR
     } catch (error) {
       console.warn(`🔄 Attempt ${attempt + 1}/${retries + 1} failed:`, error.message);
       
+      // If this is the last attempt, return intelligent fallback
       if (attempt === retries) {
-        console.error('❌ All API attempts failed');
+        console.error('❌ All API attempts failed, using intelligent fallback');
         return {
           success: false,
           error: 'I apologize, but I\'m having trouble connecting right now. Please try again in a moment.',
           details: error.message,
           retried: true,
-          offline: true // Flag for intelligent fallbacks
+          offline: true, // Flag for intelligent fallbacks
+          fallbackAvailable: true
         };
       }
       
-      // Progressive delay with wakeup attempts
-      const delay = 1000 * (attempt + 1);
+      // Progressive delay with additional wakeup for connection errors
+      const delay = Math.min(1000 * Math.pow(2, attempt), 8000); // Exponential backoff, max 8s
       console.log(`⏱️ Waiting ${delay}ms before retry...`);
       
-      // Try wakeup again on retry for persistent failures
-      if (attempt >= 1 && API_CONFIG.BASE_URL.includes('render.com')) {
+      // For connection errors, try extra wakeup
+      if (error.message.includes('ERR_CONNECTION_CLOSED') || 
+          error.message.includes('Failed to fetch') ||
+          error.message.includes('timeout')) {
+        console.log('🔄 Connection issue detected, attempting recovery...');
         await wakeupService();
       }
       
