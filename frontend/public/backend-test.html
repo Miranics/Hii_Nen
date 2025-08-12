@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiiNen Backend Live Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        .test-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .results {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #ff6b6b; }
+        .info { color: #74b9ff; }
+        h1 { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 HiiNen Backend Live Test</h1>
+        <p>This page tests the backend API endpoints from the actual hosted frontend (avoiding CORS issues).</p>
+        
+        <div>
+            <button class="test-button" onclick="testHealth()">🏥 Test Health</button>
+            <button class="test-button" onclick="testAIChat()">💬 Test AI Chat</button>
+            <button class="test-button" onclick="testAIInsights()">🧠 Test AI Insights</button>
+            <button class="test-button" onclick="testAIValidation()">✅ Test Validation</button>
+            <button class="test-button" onclick="runFullDiagnostic()">🔍 Full Diagnostic</button>
+            <button class="test-button" onclick="clearResults()">🗑️ Clear</button>
+        </div>
+        
+        <div id="results" class="results">Ready to test backend connectivity...</div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://hiinen-backend.onrender.com';
+        const resultsDiv = document.getElementById('results');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'success' ? '✅' : type === 'error' ? '❌' : '📝';
+            resultsDiv.innerHTML += `<span class="${type}">[${timestamp}] ${prefix} ${message}</span>\n`;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        function clearResults() {
+            resultsDiv.innerHTML = 'Results cleared.\n';
+        }
+        
+        async function makeRequest(endpoint, method = 'GET', data = null, description = '') {
+            const startTime = Date.now();
+            log(`Testing ${method} ${endpoint}${description ? ' - ' + description : ''}`, 'info');
+            
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                };
+                
+                if (data && method !== 'GET') {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                const duration = Date.now() - startTime;
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    log(`SUCCESS (${duration}ms): ${JSON.stringify(result, null, 2)}`, 'success');
+                    return { success: true, data: result, duration };
+                } else {
+                    const errorText = await response.text();
+                    log(`FAILED (${duration}ms): HTTP ${response.status} - ${errorText}`, 'error');
+                    return { success: false, error: errorText, status: response.status, duration };
+                }
+            } catch (error) {
+                const duration = Date.now() - startTime;
+                log(`ERROR (${duration}ms): ${error.message}`, 'error');
+                return { success: false, error: error.message, duration };
+            }
+        }
+        
+        async function testHealth() {
+            await makeRequest('/api/health', 'GET', null, 'Backend health check');
+        }
+        
+        async function testAIChat() {
+            await makeRequest('/api/ai/chat', 'POST', {
+                message: 'Hello! This is a test message from the live diagnostic tool.',
+                context: {
+                    type: 'diagnostic_test',
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                }
+            }, 'AI Chat endpoint');
+        }
+        
+        async function testAIInsights() {
+            await makeRequest('/api/ai/insights', 'POST', {
+                userData: {
+                    testUser: true,
+                    name: 'Diagnostic Test User',
+                    goals: ['Test backend connectivity', 'Verify AI integration']
+                },
+                requestType: 'diagnostic_insights'
+            }, 'AI Insights endpoint');
+        }
+        
+        async function testAIValidation() {
+            await makeRequest('/api/ai/validate-idea', 'POST', {
+                idea: {
+                    title: 'Backend Diagnostic Tool',
+                    description: 'A tool to test and validate backend API connectivity for HiiNen platform',
+                    targetMarket: 'Developers and system administrators',
+                    problem: 'Need to verify backend services are working correctly'
+                },
+                context: { diagnostic: true }
+            }, 'AI Idea Validation endpoint');
+        }
+        
+        async function runFullDiagnostic() {
+            clearResults();
+            log('🚀 Starting Full Backend Diagnostic...', 'info');
+            log(`🌐 Target: ${API_BASE}`, 'info');
+            log(`🕒 Time: ${new Date().toISOString()}`, 'info');
+            log('─'.repeat(50), 'info');
+            
+            // Test all endpoints in sequence
+            await testHealth();
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 1s delay
+            
+            await testAIChat();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testAIInsights();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testAIValidation();
+            
+            log('─'.repeat(50), 'info');
+            log('🏁 Full diagnostic complete!', 'info');
+        }
+        
+        // Auto-run health check on page load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 1000);
+        });
+    </script>
+</body>
+</html>
