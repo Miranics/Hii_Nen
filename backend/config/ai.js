@@ -6,8 +6,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const token = process.env.GITHUB_TOKEN;
-const endpoint = "https://models.github.ai/inference";
-const model = "openai/gpt-4.1";
+const endpoint = "https://models.inference.ai.azure.com";
+const model = "gpt-4o-mini"; // Back to gpt-4o-mini which should be available
 
 // Debug: Check if token is loaded
 console.log('GitHub Token loaded:', token ? 'Yes' : 'No');
@@ -20,7 +20,7 @@ const client = ModelClient(
   {
     // Add timeout configuration
     requestOptions: {
-      timeout: 30000, // 30 seconds timeout
+      timeout: 60000, // Increase to 60 seconds to rule out timeout issues
     }
   }
 );
@@ -83,9 +83,9 @@ async function getAIResponse(userMessage, conversationHistory = []) {
     console.log('🔧 Using model:', AI_COFOUNDER_CONFIG.model);
     console.log('🔧 Token preview:', token ? `${token.substring(0, 10)}...${token.slice(-4)}` : 'No token');
     
-    // Add timeout to the request - reduce to 5 seconds for faster feedback
+    // Add timeout to the request - increase timeout for testing
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('AI request timeout after 5 seconds')), 5000);
+      setTimeout(() => reject(new Error('AI request timeout after 30 seconds')), 30000);
     });
     
     const apiCall = client.path("/chat/completions").post({
