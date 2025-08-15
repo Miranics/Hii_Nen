@@ -253,20 +253,20 @@ npm run dev
 **Automated Deployment Pipeline**
 
 **Vercel (Frontend)**
-- ✅ **Automatic deployment** via GitHub integration
-- ✅ **Root Directory:** `frontend/`
-- ✅ **Build Command:** `npm run build`
-- ✅ **Environment variables** managed in dashboard
-- ✅ **Custom domain** support available
-- ✅ **CDN distribution** worldwide
+-  **Automatic deployment** via GitHub integration
+-  **Root Directory:** `frontend/`
+- **Build Command:** `npm run build`
+- **Environment variables** managed in dashboard
+-  **Custom domain** support available
+- **CDN distribution** worldwide
 
 **Render (Backend)**  
-- ✅ **Automatic deployment** via GitHub integration
-- ✅ **Build Command:** `npm install`
-- ✅ **Start Command:** `npm start`
-- ✅ **Environment variables** secured in dashboard
-- ✅ **Health monitoring** and automatic restarts
-- ✅ **SSL certificates** automatically managed
+- **Automatic deployment** via GitHub integration
+- **Build Command:** `npm install`
+- **Start Command:** `npm start`
+- **Environment variables** secured in dashboard
+- **Health monitoring** and automatic restarts
+-  **SSL certificates** automatically managed
 
 ---
 
@@ -354,24 +354,7 @@ GET /api/health
 </tr>
 </table>
 
----
 
-## Analytics & Insights
-
-<div align="center">
-
-### **Real-Time Platform Metrics**
-
-| Metric | Current Status |
-|--------|----------------|
-| **Active Users** | 500+ Entrepreneurs |
-| **Ideas Validated** | 1000+ Business Concepts |
-| **Global Reach** | 20+ Countries |
-| **Funding Facilitated** | $10M+ Capital Raised |
-| **Success Rate** | 85% Idea-to-Launch |
-| **Platform Uptime** | 99.9% Availability |
-
-</div>
 
 
 
