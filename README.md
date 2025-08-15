@@ -373,26 +373,7 @@ GET /api/health
 
 </div>
 
----
 
-## Meet the Founder
-
-<div align="center">
-
-### **Nanen Miracle Mbanaade**
-*AI/ML Engineer • Full-Stack Developer • Entrepreneur*
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/nanen-miracle)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/Miranics)
-[![Email](https://img.shields.io/badge/Email-Contact-red?style=for-the-badge&logo=gmail)](mailto:002nasya@gmail.com)
-
-*"Passionate about leveraging cutting-edge AI technology to democratize entrepreneurship and empower the next generation of African innovators."*
-
-**Expertise:** AI/ML Engineering, Full-Stack Development, Entrepreneurship  
-**Vision:** Democratizing entrepreneurship through accessible AI technology  
-**Experience:** 5+ Years in Development, 10+ Technologies Mastered  
-
-</div>
 
 ---
 
@@ -444,7 +425,6 @@ This project is licensed under the **Apache License 2.0** - see the [LICENSE](LI
 
 | Contact Type | Information |
 |--------------|-------------|
-| **Project Maintainer** | Nanen Miracle Mbanaade |
 | **Project Status** | Production-Ready MVP |
 | **Current Version** | v1.0.0 |
 | **Last Updated** | July 30, 2025 |
