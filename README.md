@@ -52,7 +52,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 
 </td>
 </tr>
-</table>
+</table>                      
 
 ### Enterprise-Grade Architecture
 - **Secure Authentication & User Management**
