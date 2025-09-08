@@ -21,7 +21,7 @@
 
 HiiNen is a **production-ready, full-stack AI co-founder platform** that empowers aspiring entrepreneurs worldwide. Built with cutting-edge web technologies and powered by **GitHub Models GPT-4**, it provides personalized business guidance, market analysis, and step-by-step startup development support.
 
-### Core Mission
+### Core Mission                 
 Democratize entrepreneurship by providing every aspiring founder with access to AI-powered guidance, expert mentorship, and the tools needed to transform ideas into successful, impactful businesses.
 
 ---
