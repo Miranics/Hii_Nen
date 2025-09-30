@@ -1,6 +1,6 @@
 <div align="center">
 
-# HiiNen   
+# HiiNen         
 ### *"Se Hii Nen"* - Let's Start (Tiv Language)
 
 <img src="frontend/public/hiinen-logo.svg" alt="HiiNen Logo" width="120" height="120">
