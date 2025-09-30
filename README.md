@@ -434,7 +434,7 @@ If HiiNen has helped you or you find it valuable, please consider giving it a st
 
 ---
 
-### **HiiNen - Empowering entrepreneurs with AI-driven business intelligence and personalized startup guidance.**
+  ### **HiiNen - Empowering entrepreneurs with AI-driven business intelligence and personalized startup guidance.**
 
 *Built with dedication by [Nanen Miracle Mbanaade](https://github.com/Miranics) - Transforming entrepreneurial dreams into reality through cutting-edge AI technology.*
 
