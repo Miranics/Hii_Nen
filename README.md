@@ -3,8 +3,8 @@
 # HiiNen                         
 ### *"Se Hii Nen"* - Let's Start (Tiv Language)          
 
-<img src="frontend/public/hiinen-logo.svg" alt="HiiNen Logo" width="120" height="120">
-
+<img src="frontend/public/hiinen-logo.svg" alt="HiiNen Logo" width="120" height="120">       
+     
 **AI-Powered Co-Founder Platform for Next-Generation Entrepreneurs**
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-hiinen.vercel.app-blue?style=for-the-badge)](https://hiinen.vercel.app)
