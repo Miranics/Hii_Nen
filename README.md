@@ -63,7 +63,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 - **Professional UI/UX with Custom Icon System**---
 
 ## Technology Stack
-
+                              
 <div align="center">
 
 ### **Frontend Technologies**
