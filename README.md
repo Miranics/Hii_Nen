@@ -71,7 +71,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 ![React](https://img.shields.io/badge/React-19.0.0-61DAFB?style=for-the-badge&logo=react)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![TypeScript](https://img.shields.io/badge/Turbopack-Latest-FF4088?style=for-the-badge)
-
+                   
 ### **Backend Technologies**   
 ![Node.js](https://img.shields.io/badge/Node.js-Latest-339933?style=for-the-badge&logo=node.js)
 ![Express](https://img.shields.io/badge/Express.js-Latest-000000?style=for-the-badge&logo=express)
