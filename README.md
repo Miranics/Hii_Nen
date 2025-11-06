@@ -31,7 +31,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 <table>
 <tr>
 <td>
-            
+                                           
 ### AI Co-Founder Intelligence
 - **Real-time AI Business Conversations**
 - **Personalized Startup Recommendations**
