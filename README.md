@@ -10,7 +10,7 @@
 [![Live Demo](https://img.shields.io/badge/Live_Demo-hiinen.vercel.app-blue?style=for-the-badge)](https://hiinen.vercel.app)
 [![Backend API](https://img.shields.io/badge/API-hiinen--backend.onrender.com-green?style=for-the-badge)](https://hiinen-backend.onrender.com)
 [![License](https://img.shields.io/badge/License-Apache_2.0-orange?style=for-the-badge)](LICENSE)
-
+                                 
 *Transforming entrepreneurial dreams into actionable business strategies through advanced AI guidance, comprehensive mentorship, and intelligent business development tools.*
 
 </div>
