@@ -64,7 +64,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 
 ## Technology Stack
                               
-<div align="center">
+<div align="center">    
 
 ### **Frontend Technologies**
 ![Next.js](https://img.shields.io/badge/Next.js-15.3.5-black?style=for-the-badge&logo=next.js)
