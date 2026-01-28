@@ -5,7 +5,7 @@
                                          
 <img src="frontend/public/hiinen-logo.svg" alt="HiiNen Logo" width="120" height="120">             
      
-**AI-Powered Co-Founder Platform for Next-Generation Entrepreneurs**     
+**AI-Powered Co-Founder Platform for Next-Generation Entrepreneurs**               
                                       
 [![Live Demo](https://img.shields.io/badge/Live_Demo-hiinen.vercel.app-blue?style=for-the-badge)](https://hiinen.vercel.app)
 [![Backend API](https://img.shields.io/badge/API-hiinen--backend.onrender.com-green?style=for-the-badge)](https://hiinen-backend.onrender.com)
