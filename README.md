@@ -41,7 +41,7 @@ Democratize entrepreneurship by providing every aspiring founder with access to 
 
 </td>
 <td>
-
+                      
 ### Comprehensive Dashboard Ecosystem
 - **Analytics & Performance Tracking** 
 - **Market Research & Competitive Analysis** 
